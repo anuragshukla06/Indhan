@@ -73,11 +73,14 @@ public class login extends AppCompatActivity {
         vehicleModelEditText = findViewById(R.id.vehicleModelEditText);
         signUpButton = findViewById(R.id.signUpButton);
         MyRequestQueue = Volley.newRequestQueue(getApplicationContext());
+        emailSinEditText = findViewById(R.id.emailSinEditText);
+        pswdSinEditText = findViewById(R.id.pswdSinEditText);
+
 
         sharedPref = getApplication().getSharedPreferences(
                 "mainSP", Context.MODE_PRIVATE);
 
-        String authKey = sharedPref.getString("authkey", "");
+        final String authKey = sharedPref.getString("authkey", "");
 
         if (authKey.isEmpty()) {
             signedIn = false;
@@ -99,8 +102,27 @@ public class login extends AppCompatActivity {
                 StringRequest MyStringRequest = new StringRequest(Request.Method.POST, signInURL, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        //This code is executed if the server responds, whether or not the response contains data.
-                        //The String 'response' contains the server's response.
+                        try {
+                            JSONObject responseObject = new JSONObject(response);
+                            String status = responseObject.getString("success");
+                            Toast.makeText(login.this, status, Toast.LENGTH_SHORT).show();
+                            if (status.equals("true")) {
+
+                                String authkey = responseObject.getString("token");
+                                setSignInVariables(authkey);
+
+                                Intent intent = new Intent(); // TODO: CALL the intent to kavyansh activity
+
+                                Toast.makeText(login.this, authkey, Toast.LENGTH_SHORT).show();
+
+
+                            } else {
+                                Toast.makeText(login.this, "Invalid Credentials!", Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (JSONException e) {
+                            Toast.makeText(login.this, "Server Error", Toast.LENGTH_SHORT).show();
+                            e.printStackTrace();
+                        }
                     }
                 }, new Response.ErrorListener() { //Create an error listener to handle errors appropriately.
                     @Override
@@ -148,9 +170,12 @@ public class login extends AppCompatActivity {
                                 try {
                                     JSONObject responseObject = new JSONObject(response);
                                     String status = responseObject.getString("success");
-                                    if (status.equals("True")) {
+                                    Toast.makeText(login.this, status, Toast.LENGTH_SHORT).show();
+                                    if (status.equals("true")) {
 
-                                        String authkey = responseObject.getString("authKey");
+                                        String authkey = responseObject.getString("token");
+
+                                        Toast.makeText(login.this, authkey, Toast.LENGTH_SHORT).show();
                                         setSignInVariables(authkey);
 
                                         Intent intent = new Intent(); // TODO: CALL the intent to kavyansh activity
@@ -158,7 +183,7 @@ public class login extends AppCompatActivity {
 
 
                                     } else {
-                                        Toast.makeText(login.this, "Invalid Credentials!", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(login.this, "You are already signed up! Please Login.", Toast.LENGTH_SHORT).show();
                                     }
                                 } catch (JSONException e) {
                                     Toast.makeText(login.this, "Server Error", Toast.LENGTH_SHORT).show();
