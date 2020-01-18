@@ -1,12 +1,5 @@
 package com.example.indhan;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
-import androidx.core.content.ContextCompat;
-
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
@@ -24,6 +17,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
+
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -36,14 +36,12 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.TreeMap;
 
 import customfonts.MyRegulerText;
 
-import static com.example.indhan.GraphActivity.FuelDataService.locationListener;
-import static com.example.indhan.GraphActivity.FuelDataService.locationManager;
+import static com.example.indhan.MainGraphActivity.FuelDataService.locationListener;
+import static com.example.indhan.MainGraphActivity.FuelDataService.locationManager;
+
 
 public class login extends AppCompatActivity {
     private TextView fbook, acc, sin, sup;
@@ -127,7 +125,7 @@ public class login extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    startService(new Intent(getApplicationContext(), GraphActivity.FuelDataService.class)); //this function can change value of mInterval.
+                    startService(new Intent(getApplicationContext(), MainGraphActivity.FuelDataService.class)); //this function can change value of mInterval.
                 } finally {
                     // 100% guarantee that this always happens, even if
                     // your update method throws an exception
