@@ -44,6 +44,9 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static com.example.indhan.login.latitude;
+import static com.example.indhan.login.longitude;
+
 public class GraphActivity extends AppCompatActivity {
 
 
@@ -53,7 +56,6 @@ public class GraphActivity extends AppCompatActivity {
         RequestQueue queue;
         static LocationManager locationManager;
         static LocationListener locationListener;
-        static double latitude, longitude;
         NotificationManagerCompat notificationManager;
         NotificationCompat.Builder DangerNotiBuilder;
         SharedPreferences sharedPref;
@@ -92,7 +94,7 @@ public class GraphActivity extends AppCompatActivity {
                         @Override
                         public void onResponse(String response) {
                             // Display the first 500 characters of the response string.
-                            Toast.makeText(FuelDataService.this, response, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(FuelDataService.this, response + " " + latitude + " " + longitude, Toast.LENGTH_SHORT).show();
 //                            textView.setText("Response is: "+ response.substring(0,500));
                         }
                     }, new Response.ErrorListener() {

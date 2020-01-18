@@ -54,6 +54,8 @@ public class login extends AppCompatActivity {
     TextView signUpButton;
     boolean signedIn = false;
     EditText emailSinEditText, pswdSinEditText;
+
+    static double latitude, longitude;
    SharedPreferences sharedPref;
 
     RequestQueue MyRequestQueue;
@@ -138,8 +140,9 @@ public class login extends AppCompatActivity {
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-                GraphActivity.FuelDataService.latitude = location.getLatitude();
-                GraphActivity.FuelDataService.longitude = location.getLongitude();
+                latitude = location.getLatitude();
+                longitude = location.getLongitude();
+                Toast.makeText(getApplicationContext(), latitude + " " + longitude, Toast.LENGTH_LONG).show();
             }
 
             @Override
