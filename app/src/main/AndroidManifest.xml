@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.indhan">
     <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+
 
     <application
         android:allowBackup="true"
@@ -10,17 +12,20 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <service android:name=".GraphActivity$FuelDataService"/>
         <activity
             android:name=".GraphActivity"
             android:label="@string/title_activity_graph"
             android:theme="@style/AppTheme.NoActionBar">
+
+        </activity>
+        <activity android:name=".login">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity android:name=".login">
 
         </activity>
     </application>

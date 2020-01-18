@@ -1,6 +1,8 @@
 package com.example.indhan;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import android.content.Context;
 import android.content.Intent;
@@ -76,6 +78,19 @@ public class login extends AppCompatActivity {
         emailSinEditText = findViewById(R.id.emailSinEditText);
         pswdSinEditText = findViewById(R.id.pswdSinEditText);
 
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setContentTitle("We have your back")
+                .setContentText("We are continuously monitoring your fuel readings...")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setOngoing(true);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        int notificationId = 1;
+// notificationId is a unique int for each notification that you must define
+        notificationManager.notify(notificationId, builder.build());
+
+        startService(new Intent(this, GraphActivity.FuelDataService.class));
 
         sharedPref = getApplication().getSharedPreferences(
                 "mainSP", Context.MODE_PRIVATE);
@@ -111,8 +126,8 @@ public class login extends AppCompatActivity {
                                 String authkey = responseObject.getString("token");
                                 setSignInVariables(authkey);
 
-                                Intent intent = new Intent(); // TODO: CALL the intent to kavyansh activity
-
+                                Intent intent = new Intent(getApplicationContext(), GraphActivity.class); // TODO: CALL the intent to kavyansh activity
+                                startActivity(intent);
                                 Toast.makeText(login.this, authkey, Toast.LENGTH_SHORT).show();
 
 
@@ -178,7 +193,9 @@ public class login extends AppCompatActivity {
                                         Toast.makeText(login.this, authkey, Toast.LENGTH_SHORT).show();
                                         setSignInVariables(authkey);
 
-                                        Intent intent = new Intent(); // TODO: CALL the intent to kavyansh activity
+//                                        Intent intent = new Intent(); // TODO: CALL the intent to kavyansh activity
+                                        Intent intent = new Intent(getApplicationContext(), GraphActivity.class); // TODO: CALL the intent to kavyansh activity
+                                        startActivity(intent);
 
 
 
