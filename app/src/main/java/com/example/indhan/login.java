@@ -200,7 +200,7 @@ public class login extends AppCompatActivity {
                                 String authkey = responseObject.getString("token");
                                 setSignInVariables(authkey);
 
-                                Intent intent = new Intent(getApplicationContext(), GraphActivity.class); // TODO: CALL the intent to kavyansh activity
+                                Intent intent = new Intent(getApplicationContext(), MainGraphActivity.class); // TODO: CALL the intent to kavyansh activity
                                 startActivity(intent);
                                 Toast.makeText(login.this, authkey, Toast.LENGTH_SHORT).show();
 
@@ -268,7 +268,7 @@ public class login extends AppCompatActivity {
                                         setSignInVariables(authkey);
 
 //                                        Intent intent = new Intent(); // TODO: CALL the intent to kavyansh activity
-                                        Intent intent = new Intent(getApplicationContext(), GraphActivity.class); // TODO: CALL the intent to kavyansh activity
+                                        Intent intent = new Intent(getApplicationContext(), MainGraphActivity.class); // TODO: CALL the intent to kavyansh activity
                                         startActivity(intent);
 
 

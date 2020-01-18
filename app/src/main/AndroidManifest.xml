@@ -14,18 +14,20 @@
         android:theme="@style/AppTheme">
         <activity android:name=".MainGraphActivity"
             android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".GraphActivity"
             android:label="@string/title_activity_graph"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
-        <activity android:name=".login"></activity>
+        <activity android:name=".login">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

@@ -55,11 +55,7 @@ public class MainGraphActivity extends AppCompatActivity {
 
             sharedPref = getApplication().getSharedPreferences(
                     "mainSP", Context.MODE_PRIVATE);
-            DangerNotiBuilder = new NotificationCompat.Builder(this)
-                    .setSmallIcon(R.drawable.ic_launcher_foreground)
-                    .setContentTitle("You are running low on fuel")
-                    .setContentText("Please head to the nearest station")
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
 
             notificationManager = NotificationManagerCompat.from(this);
 
@@ -129,7 +125,17 @@ public class MainGraphActivity extends AppCompatActivity {
                                 queue.add(sendReadingRequest);
 
                                 if ((volumeReading < 100)) {
+
+
+
+                                    DangerNotiBuilder = new NotificationCompat.Builder(getApplicationContext())
+                                            .setSmallIcon(R.drawable.ic_launcher_foreground)
+                                            .setContentTitle("You are running low on fuel")
+                                            .setContentText("Please head to the nearest station")
+                                            .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
                                     notificationManager.notify(2, DangerNotiBuilder.build());
+
 
                                 }
 
