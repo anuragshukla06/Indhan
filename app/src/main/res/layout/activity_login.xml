@@ -118,7 +118,7 @@
             android:drawableLeft="@drawable/email"
             android:drawablePadding="16dp"
             android:hint="E-mail"
-            android:inputType="text"
+            android:inputType="textEmailAddress"
             android:padding="12dp"
             android:textColor="#000" />
 
@@ -164,7 +164,7 @@
             android:drawableLeft="@drawable/lockers"
             android:drawablePadding="16dp"
             android:hint="Vehicle Model"
-            android:inputType="textPassword"
+            android:inputType="text"
             android:padding="12dp"
             android:textColor="#000" />
         <!--TODO: Vehicle model should be spinner-->
