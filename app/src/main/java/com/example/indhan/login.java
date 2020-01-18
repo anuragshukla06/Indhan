@@ -25,6 +25,7 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import customfonts.MyRegulerText;
 
@@ -33,14 +34,14 @@ public class login extends AppCompatActivity {
     private EditText emailSupEditText, pswdSupEditText, pswdConfirmEditText, vehicleModelEditText;
     LinearLayout sinSection;
     LinearLayout supSection;
-    String authKey;
     MyRegulerText signInButton;
     TextView signUpButton;
     boolean signedIn = false;
     EditText emailSinEditText, pswdSinEditText;
+   SharedPreferences sharedPref;
 
     RequestQueue MyRequestQueue;
-    String BASE_URL = "";
+    String BASE_URL = "http://172.22.125.23:8000";
 
 
     void showSignUpPage() {
@@ -73,10 +74,10 @@ public class login extends AppCompatActivity {
         signUpButton = findViewById(R.id.signUpButton);
         MyRequestQueue = Volley.newRequestQueue(getApplicationContext());
 
-        SharedPreferences sharedPref = getApplication().getSharedPreferences(
+        sharedPref = getApplication().getSharedPreferences(
                 "mainSP", Context.MODE_PRIVATE);
 
-        authKey = sharedPref.getString("authKEY", "");
+        String authKey = sharedPref.getString("authkey", "");
 
         if (authKey.isEmpty()) {
             signedIn = false;
@@ -94,7 +95,7 @@ public class login extends AppCompatActivity {
                 final String username = emailSinEditText.getText().toString();
                 final String pswd = pswdSinEditText.getText().toString();
 
-                String signInURL = "http://yourdomain.com/path";
+                String signInURL = BASE_URL + "/login";
                 StringRequest MyStringRequest = new StringRequest(Request.Method.POST, signInURL, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -138,7 +139,7 @@ public class login extends AppCompatActivity {
                     } else {
 
                         // Make Sign up post request here
-                        String url = BASE_URL + "http://yourdomain.com/path";
+                        String url = BASE_URL + "/signup";
                         StringRequest SignUpRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
@@ -148,7 +149,14 @@ public class login extends AppCompatActivity {
                                     JSONObject responseObject = new JSONObject(response);
                                     String status = responseObject.getString("success");
                                     if (status.equals("True")) {
-                                        // open homepage
+
+                                        String authkey = responseObject.getString("authKey");
+                                        setSignInVariables(authkey);
+
+                                        Intent intent = new Intent(); // TODO: CALL the intent to kavyansh activity
+
+
+
                                     } else {
                                         Toast.makeText(login.this, "Invalid Credentials!", Toast.LENGTH_SHORT).show();
                                     }
@@ -168,7 +176,7 @@ public class login extends AppCompatActivity {
                                 Map<String, String> params = new HashMap<String, String>();
                                 params.put("username", email);
                                 params.put("password", password);
-                                params.put("vehicle model", vehicleModel);
+                                params.put("model", vehicleModel);
                                 //Add the data you'd like to send to the server.
                                 return params;
                             }
@@ -198,5 +206,12 @@ public class login extends AppCompatActivity {
             }
         });
 
+    }
+
+    void setSignInVariables (String authkey) {
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("authkey", authkey);
+        editor.apply();
+        signedIn = true;
     }
 }
