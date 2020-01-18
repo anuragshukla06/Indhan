@@ -2,21 +2,29 @@ package com.example.indhan;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.LegendRenderer;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
-public class GraphActivity extends AppCompatActivity {
+public class HomeFragment extends Fragment {
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.activity_graph, container, false);
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_graph);
-        GraphView mileageGraph = (GraphView) findViewById(R.id.MileageGraph);
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        GraphView mileageGraph = getView().findViewById(R.id.MileageGraph);
         LineGraphSeries<DataPoint> series = new LineGraphSeries<>(new DataPoint[]{
                 new DataPoint(0, 1),
                 new DataPoint(1, 5),
@@ -33,7 +41,7 @@ public class GraphActivity extends AppCompatActivity {
         mileageGraph.getLegendRenderer().setVisible(true);
         mileageGraph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
 
-        GraphView distanceGraph = (GraphView) findViewById(R.id.DistanceGraph);
+        GraphView distanceGraph = getView().findViewById(R.id.DistanceGraph);
         LineGraphSeries<DataPoint> series2 = new LineGraphSeries<>(new DataPoint[]{
                 new DataPoint(0, 3),
                 new DataPoint(1, 3),
@@ -50,7 +58,7 @@ public class GraphActivity extends AppCompatActivity {
         distanceGraph.getLegendRenderer().setVisible(true);
         distanceGraph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
 
-        GraphView fuelGraph = (GraphView) findViewById(R.id.FuelGraph);
+        GraphView fuelGraph = getView().findViewById(R.id.FuelGraph);
         LineGraphSeries<DataPoint> series3 = new LineGraphSeries<>(new DataPoint[]{
                 new DataPoint(0, 3),
                 new DataPoint(2, 3),
@@ -66,7 +74,6 @@ public class GraphActivity extends AppCompatActivity {
         series3.setThickness(8);
         fuelGraph.getLegendRenderer().setVisible(true);
         fuelGraph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
+
     }
-
-
 }
