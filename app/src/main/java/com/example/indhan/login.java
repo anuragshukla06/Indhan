@@ -1,14 +1,23 @@
 package com.example.indhan;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -27,9 +36,14 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.TreeMap;
 
 import customfonts.MyRegulerText;
+
+import static com.example.indhan.GraphActivity.FuelDataService.locationListener;
+import static com.example.indhan.GraphActivity.FuelDataService.locationManager;
 
 public class login extends AppCompatActivity {
     private TextView fbook, acc, sin, sup;
@@ -43,7 +57,16 @@ public class login extends AppCompatActivity {
    SharedPreferences sharedPref;
 
     RequestQueue MyRequestQueue;
-    String BASE_URL = "http://172.22.125.23:8000";
+    static String BASE_URL = "http://172.22.125.23:8000";
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+        }
+
+    }
 
 
     void showSignUpPage() {
@@ -78,6 +101,9 @@ public class login extends AppCompatActivity {
         emailSinEditText = findViewById(R.id.emailSinEditText);
         pswdSinEditText = findViewById(R.id.pswdSinEditText);
 
+
+
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setContentTitle("We have your back")
@@ -90,7 +116,54 @@ public class login extends AppCompatActivity {
 // notificationId is a unique int for each notification that you must define
         notificationManager.notify(notificationId, builder.build());
 
-        startService(new Intent(this, GraphActivity.FuelDataService.class));
+
+//        Timer _timer = new Timer();
+//        startService(new Intent(getApplicationContext(), GraphActivity.FuelDataService.class));
+        final Handler handler = new Handler();
+
+        final Runnable mStatusChecker = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    startService(new Intent(getApplicationContext(), GraphActivity.FuelDataService.class)); //this function can change value of mInterval.
+                } finally {
+                    // 100% guarantee that this always happens, even if
+                    // your update method throws an exception
+                    handler.postDelayed(this, 5000);
+                }
+            }
+        };
+        mStatusChecker.run();
+        locationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                GraphActivity.FuelDataService.latitude = location.getLatitude();
+                GraphActivity.FuelDataService.longitude = location.getLongitude();
+            }
+
+            @Override
+            public void onStatusChanged(String s, int i, Bundle bundle) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String s) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String s) {
+
+            }
+        };
+
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        }
+        else{
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
+        }
 
         sharedPref = getApplication().getSharedPreferences(
                 "mainSP", Context.MODE_PRIVATE);
