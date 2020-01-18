@@ -53,11 +53,11 @@ public class login extends AppCompatActivity {
     boolean signedIn = false;
     EditText emailSinEditText, pswdSinEditText;
 
-    static double latitude, longitude;
+    static double latitude = 21.2497, longitude = 81.6050;
    SharedPreferences sharedPref;
 
     RequestQueue MyRequestQueue;
-    static String BASE_URL = "http://172.22.125.23:8000";
+    static String BASE_URL = "http://172.22.125.229:8000";
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -125,11 +125,12 @@ public class login extends AppCompatActivity {
             @Override
             public void run() {
                 try {
+
                     startService(new Intent(getApplicationContext(), MainGraphActivity.FuelDataService.class)); //this function can change value of mInterval.
                 } finally {
                     // 100% guarantee that this always happens, even if
                     // your update method throws an exception
-                    handler.postDelayed(this, 5000);
+                    handler.postDelayed(this, 15000);
                 }
             }
         };
