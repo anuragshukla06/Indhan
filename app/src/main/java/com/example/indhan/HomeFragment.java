@@ -181,14 +181,18 @@ public class HomeFragment extends Fragment {
         return inflater.inflate(R.layout.activity_graph, container, false);
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        APIRequest();
+        TextView fuelView = getView().findViewById(R.id.fuelText);
+        fuelView.setText("FUEL: "+volumeReading);
+    }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         queue = Volley.newRequestQueue(getContext());
 
-        APIRequest();
-        TextView fuelView = getView().findViewById(R.id.fuelText);
-        fuelView.setText(volumeReading+"");
         GraphView mileageGraph = getView().findViewById(R.id.MileageGraph);
         LineGraphSeries<DataPoint> series = new LineGraphSeries<>(new DataPoint[]{
                 new DataPoint(0, 1),
