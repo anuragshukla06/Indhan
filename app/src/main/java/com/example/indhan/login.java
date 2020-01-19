@@ -262,7 +262,6 @@ public class login extends AppCompatActivity {
                                     String status = responseObject.getString("success");
                                     Toast.makeText(login.this, status, Toast.LENGTH_SHORT).show();
                                     if (status.equals("true")) {
-
                                         String authkey = responseObject.getString("token");
 
                                         Toast.makeText(login.this, authkey, Toast.LENGTH_SHORT).show();

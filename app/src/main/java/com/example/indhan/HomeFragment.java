@@ -55,9 +55,14 @@ public class HomeFragment extends Fragment {
     static RequestQueue queue;
     static JSONArray dist, mile, fuelCom;
     GraphView mileageGraph, distanceGraph, fuelGraph;
+    TextView fuelView;
+    RelativeLayout back;
+    SharedPreferences sharedPref;
+    TextView distView;
+    TextView mileageView;
 
     void ServerGraphRequest(){
-        SharedPreferences sharedPref = getActivity().getSharedPreferences(
+        sharedPref = getActivity().getSharedPreferences(
                 "mainSP", Context.MODE_PRIVATE);
         final String authKey = sharedPref.getString("authkey", "");
         String serverUrl = login.BASE_URL + "/index";
@@ -170,8 +175,6 @@ public class HomeFragment extends Fragment {
     }
 
     void ServerRequest(){
-        SharedPreferences sharedPref = getActivity().getSharedPreferences(
-                "mainSP", Context.MODE_PRIVATE);
         final String authKey = sharedPref.getString("authkey", "");
         String serverUrl = login.BASE_URL + "/current_stats";
         final StringRequest stringRequest = new StringRequest(Request.Method.POST, serverUrl,
@@ -346,7 +349,14 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         queue = Volley.newRequestQueue(getContext());
+
+        back = getView().findViewById(R.id.background);
         ServerGraphRequest();
+        sharedPref = getActivity().getSharedPreferences(
+                "mainSP", Context.MODE_PRIVATE);
+        distView = getView().findViewById(R.id.distanceText);
+        mileageView = getView().findViewById(R.id.mileageText);
+        fuelView = getView().findViewById(R.id.fuelText);
 
 //        current_stats
 
@@ -355,12 +365,10 @@ public class HomeFragment extends Fragment {
         final Runnable r = new Runnable() {
             public void run() {
                 APIRequest();
-                TextView fuelView = getView().findViewById(R.id.fuelText);
                 Double Trun = BigDecimal.valueOf(volumeReading)
                         .setScale(2, RoundingMode.HALF_UP)
                         .doubleValue();
                 fuelView.setText("FUEL: "+Trun+" L");
-                RelativeLayout back = getView().findViewById(R.id.background);
                 int color;
                 if(Trun<1)
                     color = Color.parseColor("#ef9a9a");
@@ -371,14 +379,13 @@ public class HomeFragment extends Fragment {
                 ServerRequest();
                 Log.d(" "+distance+" DIS IN", mileage+" MIL IN");
 
-                TextView distView = getView().findViewById(R.id.distanceText);
                 Double Trun1 = BigDecimal.valueOf(distance*0.001)
                         .setScale(2, RoundingMode.HALF_UP)
                         .doubleValue();
 
                 distView.setText("DISTANCE:\n "+Trun1+" Kkm");
 
-                TextView mileageView = getView().findViewById(R.id.mileageText);
+
                 Double Trun2 = BigDecimal.valueOf(mileage)
                         .setScale(2, RoundingMode.HALF_UP)
                         .doubleValue();
