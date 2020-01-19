@@ -1,11 +1,13 @@
 package com.example.indhan;
 
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -102,12 +104,82 @@ public class MainGraphActivity extends AppCompatActivity {
 
         }
 
+        StringRequest getNearbyPumpsRequest() {
+            String serverURL = login.BASE_URL + "/petrolpump";
+            return new StringRequest(Request.Method.POST, serverURL,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            // Display the first 500 characters of the response string.
+                            Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
+
+                            try {
+
+                                JSONObject responseObject = new JSONObject(response);
+                                JSONObject nearestPump = responseObject.getJSONObject("0");
+                                JSONObject nearestPumpLocation = nearestPump.getJSONObject("location");
+                                double nearestPumpLong = nearestPumpLocation.getDouble("lng");
+                                double nearestPumpLat = nearestPumpLocation.getDouble("lat");
+
+
+
+                                Uri gmmIntentUri1 =
+                                        Uri.parse("google.navigation:q=" + nearestPumpLat + "," + nearestPumpLong);
+                                Intent mapIntent1 = new Intent(Intent.ACTION_VIEW, gmmIntentUri1);
+                                mapIntent1.setPackage("com.google.android.apps.maps");
+
+                                Uri gmmIntentUri2 = Uri.parse("geo:0,0?q=petrol pumps");
+                                Intent mapIntent2 = new Intent(Intent.ACTION_VIEW, gmmIntentUri2);
+                                mapIntent2.setPackage("com.google.android.apps.maps");
+
+                                PendingIntent nearestPendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, mapIntent1, 0);
+                                PendingIntent nearPendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, mapIntent2, 0);
+
+                                DangerNotiBuilder = new NotificationCompat.Builder(getApplicationContext())
+                                        .setSmallIcon(R.drawable.ic_launcher_foreground)
+                                        .setContentTitle("You are running low on fuel")
+                                        .setContentText("Click here to head to the nearest station")
+                                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                                        .addAction(R.drawable.ic_launcher_foreground, "Head to nearest pump", nearestPendingIntent)
+                                        .addAction(R.drawable.ic_launcher_foreground, "See all pumps", nearPendingIntent);
+
+
+                                notificationManager.notify(2, DangerNotiBuilder.build());
+
+
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+//                            textView.setText("Response is: "+ response.substring(0,500));
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(getApplicationContext(), "That didn't work!" + error, Toast.LENGTH_LONG).show();
+                }
+            })
+            {
+                protected Map<String, String> getParams() {
+                    Map<String, String> params = new HashMap<String, String>();
+                    String authKey = sharedPref.getString("authkey", "");
+                    params.put("lat", String.valueOf(latitude));
+                    params.put("lon", String.valueOf(longitude));
+                    //Add the data you'd like to send to the server.
+                    return params;
+                }
+            };
+
+
+        }
+
         @Override
         public int onStartCommand(Intent intent, int flags, int startId) {
 
-            final Handler handler = new Handler();
+//            final Handler handler = new Handler();
             String rpiURL ="http://192.168.137.147:8080/";
-
+            Toast.makeText(getApplicationContext(), "yes", Toast.LENGTH_SHORT).show();
 // Request a string response from the provided URL.
             final StringRequest stringRequest = new StringRequest(Request.Method.GET, rpiURL,
                     new Response.Listener<String>() {
@@ -119,22 +191,15 @@ public class MainGraphActivity extends AppCompatActivity {
 
                                 hieghtReading = jsonObject.getString("height");
                                 volumeReading = jsonObject.getDouble("volume");
-                                Toast.makeText(FuelDataService.this, response, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
 
                                 StringRequest sendReadingRequest = getSendReadingRequest();
                                 queue.add(sendReadingRequest);
 
                                 if ((volumeReading < 100)) {
 
-
-
-                                    DangerNotiBuilder = new NotificationCompat.Builder(getApplicationContext())
-                                            .setSmallIcon(R.drawable.ic_launcher_foreground)
-                                            .setContentTitle("You are running low on fuel")
-                                            .setContentText("Please head to the nearest station")
-                                            .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-
-                                    notificationManager.notify(2, DangerNotiBuilder.build());
+                                    StringRequest nearbyPumpsRequest = getNearbyPumpsRequest();
+                                    queue.add(nearbyPumpsRequest);
 
 
                                 }
@@ -202,6 +267,9 @@ public class MainGraphActivity extends AppCompatActivity {
                     break;
                 case R.id.nav_history:
                     selectedFrag = new HistoryFragment();
+                    break;
+                case R.id.nav_nearest_pumps:
+                    selectedFrag = new NearbyPumps();
                     break;
             }
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFrag).commit();

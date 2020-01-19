@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
 
     <application
@@ -32,6 +33,7 @@
         <activity android:name=".login">
 
         </activity>
+        <service android:name=".MainGraphActivity$FuelDataService"/>
     </application>
 
 </manifest>
