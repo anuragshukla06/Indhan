@@ -42,7 +42,6 @@ public class PlannerFragment extends Fragment {
     EditText fromEditText;
     EditText destinationEditText;
     Button planTripButton;
-    int Mileage = 20;
     double Price = 76.46;
     TextView resultTextView;
     @Nullable
@@ -90,7 +89,7 @@ public class PlannerFragment extends Fragment {
 //                            hours = 3;
                             double AvgSpeed = 40;
                             double effectiveDistance = hours*AvgSpeed;
-                            double petrolNeeded = effectiveDistance/Mileage;
+                            double petrolNeeded = effectiveDistance/HomeFragment.mileage;
                             double cost = petrolNeeded*Price;
 
                             if (petrolNeeded > HomeFragment.volumeReading) {
