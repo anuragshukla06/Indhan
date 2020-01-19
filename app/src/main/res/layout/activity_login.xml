@@ -64,7 +64,7 @@
             android:background="#f0f0f4"
             android:drawableLeft="@drawable/email"
             android:drawablePadding="16dp"
-            android:hint="E-mail"
+            android:hint="Username"
             android:inputType="text"
             android:padding="12dp"
             android:textColor="#000" />
@@ -118,7 +118,7 @@
             android:background="#f0f0f4"
             android:drawableLeft="@drawable/email"
             android:drawablePadding="16dp"
-            android:hint="E-mail"
+            android:hint="Username"
             android:inputType="textEmailAddress"
             android:padding="12dp"
             android:textColor="#000" />

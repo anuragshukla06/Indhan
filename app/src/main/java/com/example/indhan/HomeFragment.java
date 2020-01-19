@@ -1,5 +1,6 @@
 package com.example.indhan;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -60,6 +61,7 @@ public class HomeFragment extends Fragment {
     SharedPreferences sharedPref;
     TextView distView;
     TextView mileageView;
+    Button logoutButton;
 
     void ServerGraphRequest(){
         sharedPref = getActivity().getSharedPreferences(
@@ -357,6 +359,14 @@ public class HomeFragment extends Fragment {
         distView = getView().findViewById(R.id.distanceText);
         mileageView = getView().findViewById(R.id.mileageText);
         fuelView = getView().findViewById(R.id.fuelText);
+        logoutButton = getView().findViewById(R.id.logout_button);
+
+        logoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().finish();
+            }
+        });
 
 //        current_stats
 

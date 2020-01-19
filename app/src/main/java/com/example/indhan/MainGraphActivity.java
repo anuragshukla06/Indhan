@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -50,6 +51,7 @@ public class MainGraphActivity extends AppCompatActivity {
         SharedPreferences sharedPref;
         double volumeReading;
         String hieghtReading;
+
 
         @Override
         public void onCreate() {
