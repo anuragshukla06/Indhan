@@ -2,9 +2,12 @@ package com.example.indhan;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,10 +48,51 @@ import static com.example.indhan.login.longitude;
 
 
 public class HomeFragment extends Fragment {
-    double volumeReading, before, after, diff;
+    double volumeReading, before, after, diff, distance, mileage;
     String hieghtReading;
     String rpiURL = "http://192.168.137.147:8080/";
     static RequestQueue queue;
+
+    void ServerRequest(){
+        SharedPreferences sharedPref = getActivity().getSharedPreferences(
+                "mainSP", Context.MODE_PRIVATE);
+        final String authKey = sharedPref.getString("authkey", "");
+        String serverUrl = login.BASE_URL + "/current_stats";
+        final StringRequest stringRequest = new StringRequest(Request.Method.POST, serverUrl,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // Display the first 500 characters of the response string.
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            distance = jsonObject.getDouble("distance");
+                            mileage = jsonObject.getDouble("mileage");
+                            Log.d(" "+distance+" DIS", mileage+" MIL");
+                            Log.d(response, response);
+//                            Toast.makeText(getContext(), response+"", Toast.LENGTH_SHORT).show();
+//                                    Toast.makeText(getActivity(), "Current Volume" + volumeReading, Toast.LENGTH_LONG).show();
+
+                        } catch (JSONException e) {
+                            Toast.makeText(getActivity(), "Some error occured!", Toast.LENGTH_LONG).show();
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.v("Error", "onErrorResponse: " + error);
+                Toast.makeText(getActivity(), "Distance Can't be fetched!" + error, Toast.LENGTH_LONG).show();
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("token", authKey);
+                //Add the data you'd like to send to the server.
+                return params;
+            }
+        };
+        queue.add(stringRequest);
+    }
 
     double APIRequest() {
         final StringRequest stringRequest = new StringRequest(Request.Method.GET, rpiURL,
@@ -181,17 +226,52 @@ public class HomeFragment extends Fragment {
         return inflater.inflate(R.layout.activity_graph, container, false);
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        APIRequest();
-        TextView fuelView = getView().findViewById(R.id.fuelText);
-        fuelView.setText("FUEL: "+volumeReading);
-    }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         queue = Volley.newRequestQueue(getContext());
+
+//        current_stats
+
+        final Handler handler = new Handler();
+
+        final Runnable r = new Runnable() {
+            public void run() {
+                APIRequest();
+                TextView fuelView = getView().findViewById(R.id.fuelText);
+                Double Trun = BigDecimal.valueOf(volumeReading)
+                        .setScale(2, RoundingMode.HALF_UP)
+                        .doubleValue();
+                fuelView.setText("FUEL: "+Trun+" L");
+                RelativeLayout back = getView().findViewById(R.id.background);
+                int color;
+                if(Trun<1)
+                    color = Color.parseColor("#ef9a9a");
+                else
+                    color = Color.parseColor("#9ccc65");
+                back.setBackgroundColor(color);
+
+                ServerRequest();
+                Log.d(" "+distance+" DIS IN", mileage+" MIL IN");
+
+                TextView distView = getView().findViewById(R.id.distanceText);
+                Double Trun1 = BigDecimal.valueOf(distance*0.001)
+                        .setScale(2, RoundingMode.HALF_UP)
+                        .doubleValue();
+
+                distView.setText("DISTANCE:\n "+Trun1+" Kkm");
+
+                TextView mileageView = getView().findViewById(R.id.mileageText);
+                Double Trun2 = BigDecimal.valueOf(mileage)
+                        .setScale(2, RoundingMode.HALF_UP)
+                        .doubleValue();
+                mileageView.setText("MILEAGE: "+Trun2+" Km/L");
+
+                handler.postDelayed(this, 5000);
+            }
+        };
+
+        handler.postDelayed(r, 5000);
 
         GraphView mileageGraph = getView().findViewById(R.id.MileageGraph);
         LineGraphSeries<DataPoint> series = new LineGraphSeries<>(new DataPoint[]{

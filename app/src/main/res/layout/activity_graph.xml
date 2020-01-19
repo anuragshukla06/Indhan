@@ -7,10 +7,12 @@
     android:orientation="vertical">
 
     <RelativeLayout
+        android:id="@+id/background"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clipChildren="true"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="#ef9a9a">
 
         <LinearLayout
             android:id="@+id/User"
@@ -22,7 +24,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="7"
-                android:text="Hello Uttu"
+                android:layout_marginLeft="10dp"
+                android:text="Hello Jai!"
                 android:textSize="25dp" />
 
             <Button
@@ -48,9 +51,11 @@
                 android:layout_margin="10dp"
                 android:background="@drawable/circle_shape"
                 android:gravity="center"
-                android:text="FUEL" />
+                android:text="FUEL"
+                android:fontFamily="sans-serif-medium"/>
 
             <TextView
+                android:id="@+id/distanceText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
@@ -59,6 +64,7 @@
                 android:text="Distance" />
 
             <TextView
+                android:id="@+id/mileageText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
