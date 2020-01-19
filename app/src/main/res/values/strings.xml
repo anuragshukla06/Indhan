@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Indhan</string>
     <string name="title_activity_graph">GraphActivity</string>
+    <string name="review"><b>Reviews</b></string>
 </resources>

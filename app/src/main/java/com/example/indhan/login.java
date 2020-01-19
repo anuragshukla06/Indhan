@@ -57,7 +57,7 @@ public class login extends AppCompatActivity {
    SharedPreferences sharedPref;
 
     RequestQueue MyRequestQueue;
-    static String BASE_URL = "http://172.22.125.23:8000";
+    static String BASE_URL = "http://172.22.125.229:8000";
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
