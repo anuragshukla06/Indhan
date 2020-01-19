@@ -87,6 +87,7 @@ public class PlannerFragment extends Fragment {
                         try {
                             JSONObject object = new JSONObject(response);
                             double hours = object.getDouble("time");
+//                            hours = 3;
                             double AvgSpeed = 40;
                             double effectiveDistance = hours*AvgSpeed;
                             double petrolNeeded = effectiveDistance/Mileage;
@@ -94,16 +95,16 @@ public class PlannerFragment extends Fragment {
 
                             if (petrolNeeded > HomeFragment.volumeReading) {
                                 resultTextView.setText("Warning your fuel level does not seem enough for the journey."
-                                 + "\n" + "Petrol Needed" + petrolNeeded + "L"
-                                + "\n" + "Current Level" + HomeFragment.volumeReading + "L"
-                                        + "\n" + "Fuel Worth" + cost + "L");
+                                 + "\n" + "Petrol Needed: " + petrolNeeded + "L"
+                                + "\n" + "Current Level: " + HomeFragment.volumeReading + "L"
+                                        + "\n" + "Fuel Worth: " + cost + "L");
                             }
 
                             else {
                                 resultTextView.setText("You are good to go. Your Travel Details: " + "\n"
-                                        + "\n" + "Petrol Needed" + petrolNeeded + "L"
-                                        + "\n" + "Current Level" + HomeFragment.volumeReading + "L"
-                                        + "\n" + "Fuel Worth" + cost + "L");
+                                        + "\n" + "Petrol Needed: " + petrolNeeded + "L"
+                                        + "\n" + "Current Level: " + HomeFragment.volumeReading + "L"
+                                        + "\n" + "Fuel Worth: " + cost + "L");
                             }
 
                             resultTextView.append("\n Please Click the message to open navigation");
@@ -118,10 +119,12 @@ public class PlannerFragment extends Fragment {
                                     startActivity(intent);
                                 }
                             });
+                            resultTextView.setVisibility(View.VISIBLE);
 
 
                         } catch (JSONException e) {
                             e.printStackTrace();
+                            Toast.makeText(getContext(), "Server Error", Toast.LENGTH_SHORT).show();
                         }
 
 
@@ -170,7 +173,6 @@ public class PlannerFragment extends Fragment {
                     StringRequest travelPlanRequest = getDistanceRequest(fromLatLng, destinationLatLng);
                     RequestQueue queue = Volley.newRequestQueue(getContext());
                     queue.add(travelPlanRequest);
-                    Toast.makeText(getContext(), fromLatLng.latitude + " " + fromLatLng.longitude, Toast.LENGTH_SHORT).show();
 
                 }
             }

@@ -100,7 +100,9 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/FuelGraph"
             android:layout_centerHorizontal="true"
-            android:text="Refill" />
+            android:text="Refill"
+            android:layout_marginBottom="50dp"
+            />
 
         <ProgressBar
             android:id="@+id/progress_bar"

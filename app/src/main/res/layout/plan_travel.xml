@@ -51,7 +51,7 @@
                 android:layout_height="wrap_content"
                 android:text="dummyText"
                 android:textStyle="bold"
-                android:textSize="26sp"/>
+                android:textSize="10sp"/>
 
         </LinearLayout>
 
