@@ -35,6 +35,7 @@ import com.jjoe64.graphview.LegendRenderer;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -48,10 +49,125 @@ import static com.example.indhan.login.longitude;
 
 
 public class HomeFragment extends Fragment {
-    double volumeReading, before, after, diff, distance, mileage;
+    static  double volumeReading, before, after, diff, distance, mileage;
     String hieghtReading;
     String rpiURL = "http://192.168.137.147:8080/";
     static RequestQueue queue;
+    static JSONArray dist, mile, fuelCom;
+    GraphView mileageGraph, distanceGraph, fuelGraph;
+
+    void ServerGraphRequest(){
+        SharedPreferences sharedPref = getActivity().getSharedPreferences(
+                "mainSP", Context.MODE_PRIVATE);
+        final String authKey = sharedPref.getString("authkey", "");
+        String serverUrl = login.BASE_URL + "/index";
+        final StringRequest stringRequest = new StringRequest(Request.Method.POST, serverUrl,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // Display the first 500 characters of the response string.
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            dist = jsonObject.getJSONArray("distance");
+                            for (int i = 0; i < dist.length(); i++) {
+                                Log.d("dist", dist.getString(i));
+                            }
+                            mile = jsonObject.getJSONArray("mileage");
+                            for (int i = 0; i < mile.length(); i++) {
+                                Log.d("MILE", mile.getString(i));
+                            }
+                            fuelCom = jsonObject.getJSONArray("fuel");
+                            for (int i = 0; i < fuelCom.length(); i++) {
+                                Log.d("Fuel", fuelCom.getString(i));
+                            }
+
+
+                            DataPoint[] dataPoints = new DataPoint[mile.length()]; // declare an array of DataPoint objects with the same size as your list
+                            for (int i = 0; i < mile.length(); i++) {
+                                // add new DataPoint object to the array for each of your list entries
+                                try {
+                                    dataPoints[i] = new DataPoint(i + 1, mile.getDouble(i));
+                                }catch (JSONException e){}// not sure but I think the second argument should be of type double
+                            }
+                            LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(dataPoints);
+                            mileageGraph = getView().findViewById(R.id.MileageGraph);
+                            mileageGraph.addSeries(series);
+                            series.setTitle("Mileage");
+                            series.setColor(Color.MAGENTA);
+                            series.setDrawDataPoints(true);
+                            series.setDataPointsRadius(10);
+                            series.setThickness(8);
+                            mileageGraph.getLegendRenderer().setVisible(true);
+                            mileageGraph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
+
+
+
+                            DataPoint[] dataPoints2 = new DataPoint[dist.length()]; // declare an array of DataPoint objects with the same size as your list
+                            for (int i = 0; i < dist.length(); i++) {
+                                // add new DataPoint object to the array for each of your list entries
+                                try {
+                                    dataPoints2[i] = new DataPoint(i + 1, dist.getDouble(i));
+                                }catch (JSONException e){}// not sure but I think the second argument should be of type double
+                            }
+                            LineGraphSeries<DataPoint> series2 = new LineGraphSeries<DataPoint>(dataPoints2);
+                            distanceGraph = getView().findViewById(R.id.DistanceGraph);
+                            distanceGraph.addSeries(series2);
+                            series2.setTitle("Distance");
+                            series2.setColor(Color.RED);
+                            series2.setDrawDataPoints(true);
+                            series2.setDataPointsRadius(10);
+                            series2.setThickness(8);
+                            distanceGraph.getLegendRenderer().setVisible(true);
+                            distanceGraph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
+
+
+
+                            DataPoint[] dataPoints3 = new DataPoint[fuelCom.length()]; // declare an array of DataPoint objects with the same size as your list
+                            for (int i = 0; i < fuelCom.length(); i++) {
+                                // add new DataPoint object to the array for each of your list entries
+                                try {
+                                    dataPoints3[i] = new DataPoint(i + 1, fuelCom.getDouble(i));
+                                }catch (JSONException e){}// not sure but I think the second argument should be of type double
+                            }
+                            LineGraphSeries<DataPoint> series3 = new LineGraphSeries<DataPoint>(dataPoints3);
+                            fuelGraph = getView().findViewById(R.id.FuelGraph);
+                            fuelGraph.addSeries(series3);
+                            series3.setTitle("Fuel");
+                            series3.setColor(Color.BLACK);
+                            series3.setDrawDataPoints(true);
+                            series3.setDataPointsRadius(10);
+                            series3.setThickness(8);
+                            fuelGraph.getLegendRenderer().setVisible(true);
+                            fuelGraph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
+
+
+
+//                            Log.d("GRAPH"+response, response);
+//                            Toast.makeText(getContext(), response+"", Toast.LENGTH_SHORT).show();
+//                                    Toast.makeText(getActivity(), "Current Volume" + volumeReading, Toast.LENGTH_LONG).show();
+
+                        } catch (JSONException e) {
+                            Toast.makeText(getActivity(), "Some error occured!", Toast.LENGTH_LONG).show();
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.v("Error", "onErrorResponse: " + error);
+                Toast.makeText(getActivity(), "DATAPOINTS Can't be fetched!" + error, Toast.LENGTH_LONG).show();
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("token", authKey);
+                params.put("days", "7");
+                //Add the data you'd like to send to the server.
+                return params;
+            }
+        };
+        queue.add(stringRequest);
+    }
 
     void ServerRequest(){
         SharedPreferences sharedPref = getActivity().getSharedPreferences(
@@ -117,7 +233,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.v("Error", "onErrorResponse: " + error);
-                Toast.makeText(getActivity(), "That didn't work!" + error, Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), "RASP didn't work!" + error, Toast.LENGTH_LONG).show();
             }
         });
         queue.add(stringRequest);
@@ -230,6 +346,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         queue = Volley.newRequestQueue(getContext());
+        ServerGraphRequest();
 
 //        current_stats
 
@@ -266,63 +383,14 @@ public class HomeFragment extends Fragment {
                         .setScale(2, RoundingMode.HALF_UP)
                         .doubleValue();
                 mileageView.setText("MILEAGE: "+Trun2+" Km/L");
+//
+
 
                 handler.postDelayed(this, 5000);
             }
         };
 
         handler.postDelayed(r, 5000);
-
-        GraphView mileageGraph = getView().findViewById(R.id.MileageGraph);
-        LineGraphSeries<DataPoint> series = new LineGraphSeries<>(new DataPoint[]{
-                new DataPoint(0, 1),
-                new DataPoint(1, 5),
-                new DataPoint(2, 3),
-                new DataPoint(3, 2),
-                new DataPoint(4, 6)
-        });
-        mileageGraph.addSeries(series);
-        series.setTitle("Mileage");
-        series.setColor(Color.MAGENTA);
-        series.setDrawDataPoints(true);
-        series.setDataPointsRadius(10);
-        series.setThickness(8);
-        mileageGraph.getLegendRenderer().setVisible(true);
-        mileageGraph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
-
-        GraphView distanceGraph = getView().findViewById(R.id.DistanceGraph);
-        LineGraphSeries<DataPoint> series2 = new LineGraphSeries<>(new DataPoint[]{
-                new DataPoint(0, 3),
-                new DataPoint(1, 3),
-                new DataPoint(2, 6),
-                new DataPoint(3, 2),
-                new DataPoint(4, 5)
-        });
-        distanceGraph.addSeries(series2);
-        series2.setTitle("Distance");
-        series2.setColor(Color.RED);
-        series2.setDrawDataPoints(true);
-        series2.setDataPointsRadius(10);
-        series2.setThickness(8);
-        distanceGraph.getLegendRenderer().setVisible(true);
-        distanceGraph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
-
-        GraphView fuelGraph = getView().findViewById(R.id.FuelGraph);
-        LineGraphSeries<DataPoint> series3 = new LineGraphSeries<>(new DataPoint[]{
-                new DataPoint(0, 3),
-                new DataPoint(2, 3),
-                new DataPoint(3, 5),
-                new DataPoint(3, 2),
-                new DataPoint(5, 4)
-        });
-        fuelGraph.addSeries(series3);
-        series3.setTitle("Fuel");
-        series3.setColor(Color.BLACK);
-        series3.setDrawDataPoints(true);
-        series3.setDataPointsRadius(10);
-        series3.setThickness(8);
-        fuelGraph.getLegendRenderer().setVisible(true);
-        fuelGraph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
 
         final Button refill = getView().findViewById(R.id.refill);
         final ProgressBar bar = getView().findViewById(R.id.progress_bar);
