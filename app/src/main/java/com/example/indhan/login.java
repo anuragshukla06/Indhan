@@ -130,7 +130,7 @@ public class login extends AppCompatActivity {
                 } finally {
                     // 100% guarantee that this always happens, even if
                     // your update method throws an exception
-                    handler.postDelayed(this, 15000);
+                    handler.postDelayed(this, 300000);
                 }
             }
         };

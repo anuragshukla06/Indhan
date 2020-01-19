@@ -268,6 +268,9 @@ public class MainGraphActivity extends AppCompatActivity {
                 case R.id.nav_history:
                     selectedFrag = new HistoryFragment();
                     break;
+                case R.id.nav_nearest_pumps:
+                    selectedFrag = new NearbyPumps();
+                    break;
             }
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFrag).commit();
 
