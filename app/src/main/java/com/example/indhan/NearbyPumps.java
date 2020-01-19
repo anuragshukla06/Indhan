@@ -69,7 +69,7 @@ public class NearbyPumps extends Fragment {
                     public void onResponse(String response) {
                         // Display the first 500 characters of the response string.
                         ArrayList<PumpContentClass> myDataset = new ArrayList<>();
-                        Toast.makeText(getContext(), response, Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(getContext(), response, Toast.LENGTH_SHORT).show();
                         try {
                             JSONObject responseObject = new JSONObject(response);
 

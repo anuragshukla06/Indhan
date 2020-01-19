@@ -141,7 +141,7 @@ public class login extends AppCompatActivity {
             public void onLocationChanged(Location location) {
                 latitude = location.getLatitude();
                 longitude = location.getLongitude();
-                Toast.makeText(getApplicationContext(), latitude + " " + longitude, Toast.LENGTH_LONG).show();
+//                Toast.makeText(getApplicationContext(), latitude + " " + longitude, Toast.LENGTH_LONG).show();
             }
 
             @Override
@@ -195,7 +195,7 @@ public class login extends AppCompatActivity {
                         try {
                             JSONObject responseObject = new JSONObject(response);
                             String status = responseObject.getString("success");
-                            Toast.makeText(login.this, status, Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(login.this, status, Toast.LENGTH_SHORT).show();
                             if (status.equals("true")) {
 
                                 String authkey = responseObject.getString("token");
@@ -203,7 +203,7 @@ public class login extends AppCompatActivity {
 
                                 Intent intent = new Intent(getApplicationContext(), MainGraphActivity.class); // TODO: CALL the intent to kavyansh activity
                                 startActivity(intent);
-                                Toast.makeText(login.this, authkey, Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(login.this, authkey, Toast.LENGTH_SHORT).show();
 
 
                             } else {
