@@ -1,6 +1,5 @@
 package com.example.indhan;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -62,11 +61,9 @@ public class HomeFragment extends Fragment {
     TextView distView;
     TextView mileageView;
     Button logoutButton;
+    String authKey;
 
     void ServerGraphRequest(){
-        sharedPref = getActivity().getSharedPreferences(
-                "mainSP", Context.MODE_PRIVATE);
-        final String authKey = sharedPref.getString("authkey", "");
         String serverUrl = login.BASE_URL + "/index";
         final StringRequest stringRequest = new StringRequest(Request.Method.POST, serverUrl,
                 new Response.Listener<String>() {
@@ -177,7 +174,7 @@ public class HomeFragment extends Fragment {
     }
 
     void ServerRequest(){
-        final String authKey = sharedPref.getString("authkey", "");
+
         String serverUrl = login.BASE_URL + "/current_stats";
         final StringRequest stringRequest = new StringRequest(Request.Method.POST, serverUrl,
                 new Response.Listener<String>() {
@@ -368,6 +365,10 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        sharedPref = getActivity().getSharedPreferences(
+                "mainSP", Context.MODE_PRIVATE);
+        authKey = sharedPref.getString("authkey", "");
+
 //        current_stats
 
         final Handler handler = new Handler();
@@ -375,10 +376,12 @@ public class HomeFragment extends Fragment {
         final Runnable r = new Runnable() {
             public void run() {
                 APIRequest();
+
                 Double Trun = BigDecimal.valueOf(volumeReading)
                         .setScale(2, RoundingMode.HALF_UP)
                         .doubleValue();
                 fuelView.setText("FUEL: "+Trun+" L");
+
                 int color;
                 if(Trun<1)
                     color = Color.parseColor("#ef9a9a");
@@ -396,7 +399,9 @@ public class HomeFragment extends Fragment {
                 distView.setText("DISTANCE:\n "+Trun1+" Kkm");
 
 
-                Double Trun2 = BigDecimal.valueOf(mileage)
+//                Double Trun2 = BigDecimal.valueOf(mileage);
+
+                Double Trun2 = BigDecimal.valueOf(mileage*0.001)
                         .setScale(2, RoundingMode.HALF_UP)
                         .doubleValue();
                 mileageView.setText("MILEAGE: "+Trun2+" Km/L");

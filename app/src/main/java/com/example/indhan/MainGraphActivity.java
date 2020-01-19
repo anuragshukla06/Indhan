@@ -9,7 +9,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 import android.view.MenuItem;
 import android.widget.Button;
@@ -81,7 +80,7 @@ public class MainGraphActivity extends AppCompatActivity {
                         @Override
                         public void onResponse(String response) {
                             // Display the first 500 characters of the response string.
-                            Toast.makeText(FuelDataService.this, response + " " + latitude + " " + longitude, Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(FuelDataService.this, response + " " + latitude + " " + longitude, Toast.LENGTH_SHORT).show();
 //                            textView.setText("Response is: "+ response.substring(0,500));
                         }
                     }, new Response.ErrorListener() {
@@ -113,7 +112,7 @@ public class MainGraphActivity extends AppCompatActivity {
                         @Override
                         public void onResponse(String response) {
                             // Display the first 500 characters of the response string.
-                            Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
 
                             try {
 
@@ -181,7 +180,7 @@ public class MainGraphActivity extends AppCompatActivity {
 
 //            final Handler handler = new Handler();
             String rpiURL ="http://192.168.137.147:8080/";
-            Toast.makeText(getApplicationContext(), "yes", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getApplicationContext(), "yes", Toast.LENGTH_SHORT).show();
 // Request a string response from the provided URL.
             final StringRequest stringRequest = new StringRequest(Request.Method.GET, rpiURL,
                     new Response.Listener<String>() {
@@ -193,7 +192,7 @@ public class MainGraphActivity extends AppCompatActivity {
 
                                 hieghtReading = jsonObject.getString("height");
                                 volumeReading = jsonObject.getDouble("volume");
-                                Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
 
                                 StringRequest sendReadingRequest = getSendReadingRequest();
                                 queue.add(sendReadingRequest);

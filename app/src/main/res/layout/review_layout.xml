@@ -7,84 +7,122 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_margin="10dp">
+        android:layout_margin="10dp"
+        android:orientation="horizontal">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Name: "
             android:padding="10dp"
-        />
+            android:text="Name: " />
 
         <TextView
             android:id="@+id/name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="DUMMY"
-            android:padding="10dp"/>
+            android:padding="10dp"
+            android:text="DUMMY" />
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_margin="10dp">
+        android:layout_margin="10dp"
+        android:orientation="horizontal">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Google Rating: "
             android:padding="10dp"
-            />
+            android:text="Google Rating: " />
 
         <TextView
             android:id="@+id/rating"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="DUMMY"
-            android:padding="10dp"/>
+            android:padding="10dp"
+            android:text="DUMMY" />
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_margin="10dp">
+        android:layout_margin="10dp"
+        android:orientation="horizontal">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Indhan Rating: "
             android:padding="10dp"
-            />
+            android:text="Indhan Rating: " />
 
         <TextView
             android:id="@+id/app_rating"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="DUMMY"
-            android:padding="10dp"/>
+            android:padding="10dp"
+            android:text="DUMMY" />
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_margin="10dp">
+        android:layout_margin="10dp"
+        android:orientation="horizontal">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Your Rating: "
             android:padding="10dp"
-            />
+            android:text="Rate the Sanitation: " />
 
         <EditText
             android:id="@+id/your_rating"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="Enter Rating"
-            android:textSize="15dp"
-            android:padding="10dp"/>
+            android:padding="10dp"
+            android:textSize="15dp" />
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="Rate the ATM Services: " />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Enter Rating"
+            android:padding="10dp"
+            android:textSize="15dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="Rate the Food Outlets: " />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Enter Rating"
+            android:padding="10dp"
+            android:textSize="15dp" />
+    </LinearLayout>
 
 </LinearLayout>

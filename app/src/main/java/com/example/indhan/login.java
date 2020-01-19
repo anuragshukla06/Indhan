@@ -260,11 +260,11 @@ public class login extends AppCompatActivity {
                                 try {
                                     JSONObject responseObject = new JSONObject(response);
                                     String status = responseObject.getString("success");
-                                    Toast.makeText(login.this, status, Toast.LENGTH_SHORT).show();
+//                                    Toast.makeText(login.this, status, Toast.LENGTH_SHORT).show();
                                     if (status.equals("true")) {
                                         String authkey = responseObject.getString("token");
 
-                                        Toast.makeText(login.this, authkey, Toast.LENGTH_SHORT).show();
+//                                        Toast.makeText(login.this, authkey, Toast.LENGTH_SHORT).show();
                                         setSignInVariables(authkey);
 
 //                                        Intent intent = new Intent(); // TODO: CALL the intent to kavyansh activity
