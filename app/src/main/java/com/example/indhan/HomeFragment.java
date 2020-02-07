@@ -57,7 +57,7 @@ import static com.example.indhan.login.longitude;
 public class HomeFragment extends Fragment {
     static  double volumeReading, before, after, diff, distance, mileage;
     String hieghtReading;
-    String rpiURL = "http://192.168.137.232:8080/";
+    public String rpiURL = "http://192.168.137.232:8080/";
     static RequestQueue queue;
     static JSONArray dist, mile, fuelCom;
     GraphView mileageGraph, distanceGraph, fuelGraph;
@@ -265,13 +265,15 @@ public class HomeFragment extends Fragment {
 
 
     public static class PetrolPumpReview extends  DialogFragment{
-        TextView nameView;
+        Double diff;
+        TextView nameView, fraudView;
         LinearLayout foodRatingBarLayout;
         String name = "DUMMY";
         RatingBar foodRatingBar, sanitationRatingBar, paymentRatingBar;
-        PetrolPumpReview(JSONObject json) {
+        PetrolPumpReview(JSONObject json, Double diff) {
             try {
                 name = json.getString("name");
+                this.diff = diff;
             }catch (JSONException e){
                 Toast.makeText(getContext(), "ERROR PARSING FOR REVIEW", Toast.LENGTH_LONG).show();
             }
@@ -285,7 +287,8 @@ public class HomeFragment extends Fragment {
             View view = inflater.inflate(R.layout.review_layout, null);
             builder.setView(view);
 
-
+            fraudView = view.findViewById(R.id.fraud);
+            fraudView.setText("Did you refill with "+diff+ " Litres?");
             foodRatingBarLayout = view.findViewById(R.id.foodRatingBar);
             foodRatingBar = view.findViewById(R.id.RatingFood);
             sanitationRatingBar = view.findViewById(R.id.RatingSanitation);
@@ -304,16 +307,21 @@ public class HomeFragment extends Fragment {
             final ArrayList<Boolean> food = new ArrayList<>();
             final ArrayList<Boolean> air = new ArrayList<>();
             final ArrayList<Boolean> cashless = new ArrayList<>();
+            final ArrayList<Boolean> yesList = new ArrayList<>();
+
             bathroom.add(false);
             food.add(false);
             air.add(false);
             cashless.add(false);
+            yesList.add(false);
 
 
             CheckBox check1 = view.findViewById(R.id.bathroom);
             CheckBox check2 = view.findViewById(R.id.food);
             CheckBox check3 = view.findViewById(R.id.cashless);
             CheckBox check4 = view.findViewById(R.id.air);
+            final CheckBox yes = view.findViewById(R.id.yes);
+            CheckBox no = view.findViewById(R.id.no);
             View.OnClickListener OnCheckBoxClicked = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -356,6 +364,21 @@ public class HomeFragment extends Fragment {
                             else
                                 air.add(false);
                             break;
+                        case R.id.yes:
+                            if(checked){
+                                yesList.add(false);
+                                Toast.makeText(getActivity(), "YES", Toast.LENGTH_SHORT).show();
+                            }
+                            else
+                               yesList.add(true);
+                            break;
+                        case R.id.no:
+                            if(checked){
+                                yesList.add(true);
+                                Toast.makeText(getActivity(), "NO", Toast.LENGTH_SHORT).show();
+                            }
+                            else
+                                yesList.add(false);
                     }
 
                 }
@@ -364,6 +387,8 @@ public class HomeFragment extends Fragment {
             check2.setOnClickListener(OnCheckBoxClicked);
             check4.setOnClickListener(OnCheckBoxClicked);
             check3.setOnClickListener(OnCheckBoxClicked);
+            yes.setOnClickListener(OnCheckBoxClicked);
+            no.setOnClickListener(OnCheckBoxClicked);
 
             builder.setTitle("Please provide your review")
                     .setPositiveButton("Okay", new DialogInterface.OnClickListener() {
@@ -375,7 +400,7 @@ public class HomeFragment extends Fragment {
                                         @Override
                                         public void onResponse(String response) {
                                                 Log.i("response", response);
-                                                Toast.makeText(getContext(), "REVIEWS SUBMITTED!", Toast.LENGTH_SHORT).show();
+//                                                Toast.makeText(getActivity(), "REVIEWS SUBMITTED!", Toast.LENGTH_SHORT).show();
                                         }
                                     }, new Response.ErrorListener() {
                                 @Override
@@ -394,6 +419,7 @@ public class HomeFragment extends Fragment {
                                     foodRating = String.valueOf(foodRatingBar.getRating());
                                     sanitationRating = String.valueOf(sanitationRatingBar.getRating());
                                     paymentRating = String.valueOf(paymentRatingBar.getRating());
+                                    Boolean fraudDetection = yesList.get(yesList.size()-1);
 
                                     Map<String, String> params = new HashMap<String, String>();
 
@@ -405,6 +431,7 @@ public class HomeFragment extends Fragment {
                                     params.put("sanitation", sanitationRating);
                                     params.put("payment", paymentRating);
                                     params.put("foodrating", foodRating);
+                                    params.put("fraud", String.valueOf(fraudDetection));
 
                                     return params;
                                 }
@@ -421,34 +448,6 @@ public class HomeFragment extends Fragment {
             return builder.create();
         }
 
-    }
-
-    public static class FuelCheckDialog extends DialogFragment {
-        double difference;
-
-        FuelCheckDialog(double diff) {
-            difference = diff;
-        }
-
-        @NonNull
-        @Override
-        public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            builder.setMessage("Did you just fill your tank with " + difference + " Litres ?")
-                    .setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                        }
-                    })
-                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                        }
-                    });
-            return builder.create();
-        }
     }
 
     @Nullable
@@ -484,6 +483,7 @@ public class HomeFragment extends Fragment {
         sharedPref = getActivity().getSharedPreferences(
                 "mainSP", Context.MODE_PRIVATE);
         authKey = sharedPref.getString("authkey", "");
+
 
         bathroom = false;
         food = false;
@@ -543,7 +543,7 @@ public class HomeFragment extends Fragment {
         refill.setTag(1);
         refill.setOnClickListener(new View.OnClickListener() {
 
-            void APIPOSTRequest() {
+            void APIPOSTRequest(final Double diff) {
                 String serverURL = login.BASE_URL + "/petrol_pump_ratings";
                 final StringRequest stringRequest = new StringRequest(Request.Method.POST, serverURL,
                         new Response.Listener<String>() {
@@ -551,7 +551,7 @@ public class HomeFragment extends Fragment {
                             public void onResponse(String response) {
                                 try {
                                     JSONObject jsonObject = new JSONObject(response);
-                                    PetrolPumpReview review = new PetrolPumpReview(jsonObject);
+                                    PetrolPumpReview review = new PetrolPumpReview(jsonObject, diff);
                                     review.show(getFragmentManager(), "review");
 
                                     Toast.makeText(getContext(), response + "", Toast.LENGTH_LONG).show();
@@ -593,9 +593,10 @@ public class HomeFragment extends Fragment {
                             .setScale(3, RoundingMode.HALF_UP)
                             .doubleValue();
 //                    Toast.makeText(getActivity(), "DIFF"+diffTrun, Toast.LENGTH_LONG).show();
-                    FuelCheckDialog fuelcheck = new FuelCheckDialog(diffTrun);
-                    fuelcheck.show(getFragmentManager(), "Fuel Check");
-                    APIPOSTRequest();
+//                    FuelCheckDialog fuelcheck = new FuelCheckDialog(diffTrun);
+//                    fuelcheck.show(getFragmentManager(), "Fuel Check");
+//                    bar.setVisibility(View.VISIBLE);
+                    APIPOSTRequest(diffTrun);
                     v.setTag(1);
                 }
             }

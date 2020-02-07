@@ -11,7 +11,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.MenuItem;
-import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -179,7 +178,7 @@ public class MainGraphActivity extends AppCompatActivity {
         public int onStartCommand(Intent intent, int flags, int startId) {
 
 //            final Handler handler = new Handler();
-            String rpiURL ="http://192.168.137.147:8080/";
+            String rpiURL ="http://192.168.137.232:8080/";
 //            Toast.makeText(getApplicationContext(), "yes", Toast.LENGTH_SHORT).show();
 // Request a string response from the provided URL.
             final StringRequest stringRequest = new StringRequest(Request.Method.GET, rpiURL,
