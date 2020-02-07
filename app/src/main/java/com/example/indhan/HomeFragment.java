@@ -102,8 +102,9 @@ public class HomeFragment extends Fragment {
                             }
                             LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(dataPoints);
                             mileageGraph = getView().findViewById(R.id.MileageGraph);
-                            mileageGraph.getViewport().setScalable(true); // enables horizontal zooming and scrolling
-                            mileageGraph.getViewport().setScalableY(true); // enables vertical zooming and scrolling
+//                            mileageGraph.getViewport().setScrollable(true);
+//                            mileageGraph.getViewport().setScalable(true); // enables horizontal zooming and scrolling
+//                            mileageGraph.getViewport().setScalableY(true); // enables vertical zooming and scrolling
                             mileageGraph.addSeries(series);
                             series.setTitle("Mileage");
                             series.setColor(Color.MAGENTA);
@@ -124,8 +125,8 @@ public class HomeFragment extends Fragment {
                             }
                             LineGraphSeries<DataPoint> series2 = new LineGraphSeries<DataPoint>(dataPoints2);
                             distanceGraph = getView().findViewById(R.id.DistanceGraph);
-                            distanceGraph.getViewport().setScalable(true); // enables horizontal zooming and scrolling
-                            distanceGraph.getViewport().setScalableY(true); // enables vertical zooming and scrolling
+//                            distanceGraph.getViewport().setScalable(true); // enables horizontal zooming and scrolling
+//                            distanceGraph.getViewport().setScalableY(true); // enables vertical zooming and scrolling
                             distanceGraph.addSeries(series2);
                             series2.setTitle("Distance");
                             series2.setColor(Color.RED);
