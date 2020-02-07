@@ -1,15 +1,21 @@
 package com.example.indhan;
 
+import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+
 import java.util.Random;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -18,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,7 +57,6 @@ import static com.example.indhan.login.longitude;
  */
 
 
-
 public class NearbyPumps extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -63,6 +69,13 @@ public class NearbyPumps extends Fragment {
     RecyclerView pumpRecyclerView;
     RecyclerView.LayoutManager layoutManager;
     FloatingActionButton filterFloatButton;
+    LinearLayout filterLinearLayout;
+    CardView washroomCardView;
+    CardView airCardView;
+    CardView cashlessCardView;
+    CardView restaurantCardView;
+    boolean clickedArray[];
+    ArrayList<PumpContentClass> myDataset;
 
     StringRequest getNearbyPumpsRequest() {
         String serverURL = login.BASE_URL + "/petrol_pump_ratings_recommendation";
@@ -76,7 +89,7 @@ public class NearbyPumps extends Fragment {
                         try {
                             JSONObject responseObject = new JSONObject(response);
 
-                            for(int i=0; i<responseObject.length(); i++) {
+                            for (int i = 0; i < responseObject.length(); i++) {
                                 JSONObject object = responseObject.getJSONObject(Integer.toString(i));
                                 String pumpName = object.getString("name");
                                 String googleRating = object.getString("rating");
@@ -112,8 +125,7 @@ public class NearbyPumps extends Fragment {
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(getContext(), "That didn't work!" + error, Toast.LENGTH_LONG).show();
             }
-        })
-        {
+        }) {
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("lat", String.valueOf(latitude));
@@ -128,10 +140,10 @@ public class NearbyPumps extends Fragment {
 
     void fillRandomPumpData(int n) {
 
-        ArrayList<PumpContentClass> myDataset = new ArrayList<>();
+        myDataset = new ArrayList<>();
         Random rand = new Random();
 
-        for(int i=0; i<n; i++) {
+        for (int i = 0; i < n; i++) {
             myDataset.add(new PumpContentClass("ABC" + rand.nextInt(),
                     rand.nextInt(5) + "", rand.nextInt(5) + "", rand.nextFloat(), rand.nextFloat(),
                     String.valueOf(rand.nextInt(5)),
@@ -144,6 +156,61 @@ public class NearbyPumps extends Fragment {
         pumpRecyclerView.setAdapter(mAdapter);
     }
 
+    void filterDataService() {
+        ArrayList<PumpContentClass> filterArrayList = new ArrayList<>();
+        if (!(clickedArray[0] || clickedArray[1] || clickedArray[2] || clickedArray[3])) {
+            MyAdapter adapter = new MyAdapter(myDataset);
+            pumpRecyclerView.setAdapter(adapter);
+            return;
+        }
+
+        int flag = 0;
+        for(boolean b: clickedArray) {
+            if (b) {flag++;}
+        }
+
+        for (PumpContentClass p: myDataset) {
+            int mScore = 0;
+            if (clickedArray[0] && p.isWashroom()) {
+                mScore++;
+            }
+            if (clickedArray[1] && p.isAir()) {
+                mScore++;
+            }
+            if (clickedArray[2] && p.isCashless()) {
+                mScore++;
+            }
+            if (clickedArray[3] && p.isRestaurant()) {
+                mScore++;
+            }
+
+            if (mScore == flag){
+
+                filterArrayList.add(p);
+            }
+
+        }
+        MyAdapter adapter = new MyAdapter(filterArrayList);
+        pumpRecyclerView.setAdapter(adapter);
+        return;
+
+    }
+
+    void changeColour(View view, int id) {
+
+        if (clickedArray[id]) {
+            clickedArray[id] = false;
+            view.setBackgroundColor(getResources().getColor(R.color.white));
+            filterDataService();
+        } else {
+
+
+            clickedArray[id] = true;
+            view.setBackgroundColor(getResources().getColor(R.color.blue));
+            filterDataService();
+        }
+
+    }
 
 
     @Override
@@ -151,14 +218,55 @@ public class NearbyPumps extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         pumpRecyclerView = getView().findViewById(R.id.pumpRecyclerView);
         filterFloatButton = getView().findViewById(R.id.filterFloatButton);
+        filterLinearLayout = getView().findViewById(R.id.filterLinearLayout);
+        washroomCardView = getView().findViewById(R.id.washroomCardView);
+        airCardView = getView().findViewById(R.id.airCardView);
+        cashlessCardView = getView().findViewById(R.id.cashlessCardView);
+        restaurantCardView = getView().findViewById(R.id.restaurantCardView);
+        clickedArray = new boolean[4];
+
+
+        washroomCardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                changeColour(view, 0);
+            }
+        });
+        airCardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                changeColour(view, 1);
+            }
+        });
+        cashlessCardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                changeColour(view, 2);
+            }
+        });
+        restaurantCardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                changeColour(view, 3);
+            }
+        });
 
         layoutManager = new LinearLayoutManager(getContext());
         pumpRecyclerView.setLayoutManager(layoutManager);
         RequestQueue queue = Volley.newRequestQueue(getContext());
 
+
         StringRequest nearbyPumpsRequest = getNearbyPumpsRequest();
 
         fillRandomPumpData(15);
+
+        filterFloatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                filterLinearLayout.setVisibility(View.VISIBLE);
+            }
+        });
+
 
 //        queue.add(nearbyPumpsRequest);
 
@@ -202,7 +310,6 @@ public class NearbyPumps extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-
 
 
         return inflater.inflate(R.layout.fragment_nearby_pumps, container, false);
