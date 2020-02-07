@@ -27,6 +27,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -61,6 +62,7 @@ public class NearbyPumps extends Fragment {
     private String mParam2;
     RecyclerView pumpRecyclerView;
     RecyclerView.LayoutManager layoutManager;
+    FloatingActionButton filterFloatButton;
 
     StringRequest getNearbyPumpsRequest() {
         String serverURL = login.BASE_URL + "/petrol_pump_ratings_recommendation";
@@ -148,6 +150,7 @@ public class NearbyPumps extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         pumpRecyclerView = getView().findViewById(R.id.pumpRecyclerView);
+        filterFloatButton = getView().findViewById(R.id.filterFloatButton);
 
         layoutManager = new LinearLayoutManager(getContext());
         pumpRecyclerView.setLayoutManager(layoutManager);
