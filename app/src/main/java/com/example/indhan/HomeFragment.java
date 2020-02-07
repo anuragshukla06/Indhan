@@ -191,7 +191,7 @@ public class HomeFragment extends Fragment {
 //                                    Toast.makeText(getActivity(), "Current Volume" + volumeReading, Toast.LENGTH_LONG).show();
 
                         } catch (JSONException e) {
-                            Toast.makeText(getActivity(), "Some error occured!", Toast.LENGTH_LONG).show();
+//                            Toast.makeText(getActivity(), "Some error occured!", Toast.LENGTH_LONG).show();
                             e.printStackTrace();
                         }
                     }
@@ -199,7 +199,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.v("Error", "onErrorResponse: " + error);
-                Toast.makeText(getActivity(), "Distance Can't be fetched!" + error, Toast.LENGTH_LONG).show();
+//                Toast.makeText(getActivity(), "Distance Can't be fetched!" + error, Toast.LENGTH_LONG).show();
             }
         }) {
             protected Map<String, String> getParams() {
@@ -235,7 +235,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.v("Error", "onErrorResponse: " + error);
-                Toast.makeText(getActivity(), "RASP didn't work!" + error, Toast.LENGTH_LONG).show();
+//                Toast.makeText(getActivity(), "RASP didn't work!" + error, Toast.LENGTH_LONG).show();
             }
         });
         queue.add(stringRequest);
