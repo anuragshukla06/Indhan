@@ -13,8 +13,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,7 +35,10 @@ import com.android.volley.toolbox.Volley;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.LegendRenderer;
 import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.DataPointInterface;
 import com.jjoe64.graphview.series.LineGraphSeries;
+import com.jjoe64.graphview.series.OnDataPointTapListener;
+import com.jjoe64.graphview.series.Series;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,6 +46,7 @@ import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,7 +57,7 @@ import static com.example.indhan.login.longitude;
 public class HomeFragment extends Fragment {
     static  double volumeReading, before, after, diff, distance, mileage;
     String hieghtReading;
-    String rpiURL = "http://192.168.137.147:8080/";
+    String rpiURL = "http://192.168.137.232:8080/";
     static RequestQueue queue;
     static JSONArray dist, mile, fuelCom;
     GraphView mileageGraph, distanceGraph, fuelGraph;
@@ -62,6 +68,8 @@ public class HomeFragment extends Fragment {
     TextView mileageView;
     Button logoutButton;
     String authKey;
+    boolean bathroom, food, cashless, air;
+    CheckBox check1, check2, check3, check4;
 
     void ServerGraphRequest(){
         String serverUrl = login.BASE_URL + "/index";
@@ -86,15 +94,16 @@ public class HomeFragment extends Fragment {
                             }
 
 
-                            DataPoint[] dataPoints = new DataPoint[mile.length()]; // declare an array of DataPoint objects with the same size as your list
+                            DataPoint[] dataPoints = new DataPoint[mile.length()];
                             for (int i = 0; i < mile.length(); i++) {
-                                // add new DataPoint object to the array for each of your list entries
                                 try {
                                     dataPoints[i] = new DataPoint(i + 1, mile.getDouble(i));
-                                }catch (JSONException e){}// not sure but I think the second argument should be of type double
+                                }catch (JSONException e){}
                             }
                             LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(dataPoints);
                             mileageGraph = getView().findViewById(R.id.MileageGraph);
+                            mileageGraph.getViewport().setScalable(true); // enables horizontal zooming and scrolling
+                            mileageGraph.getViewport().setScalableY(true); // enables vertical zooming and scrolling
                             mileageGraph.addSeries(series);
                             series.setTitle("Mileage");
                             series.setColor(Color.MAGENTA);
@@ -115,6 +124,8 @@ public class HomeFragment extends Fragment {
                             }
                             LineGraphSeries<DataPoint> series2 = new LineGraphSeries<DataPoint>(dataPoints2);
                             distanceGraph = getView().findViewById(R.id.DistanceGraph);
+                            distanceGraph.getViewport().setScalable(true); // enables horizontal zooming and scrolling
+                            distanceGraph.getViewport().setScalableY(true); // enables vertical zooming and scrolling
                             distanceGraph.addSeries(series2);
                             series2.setTitle("Distance");
                             series2.setColor(Color.RED);
@@ -135,6 +146,8 @@ public class HomeFragment extends Fragment {
                             }
                             LineGraphSeries<DataPoint> series3 = new LineGraphSeries<DataPoint>(dataPoints3);
                             fuelGraph = getView().findViewById(R.id.FuelGraph);
+//                            fuelGraph.getViewport().setScalable(true); // enables horizontal zooming and scrolling
+//                            fuelGraph.getViewport().setScalableY(true); // enables vertical zooming and scrolling
                             fuelGraph.addSeries(series3);
                             series3.setTitle("Fuel");
                             series3.setColor(Color.BLACK);
@@ -143,6 +156,12 @@ public class HomeFragment extends Fragment {
                             series3.setThickness(8);
                             fuelGraph.getLegendRenderer().setVisible(true);
                             fuelGraph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
+                            series3.setOnDataPointTapListener(new OnDataPointTapListener() {
+                                @Override
+                                public void onTap(Series series, DataPointInterface dataPoint) {
+                                    Toast.makeText(getActivity(), "Data Point Clicked: "+dataPoint, Toast.LENGTH_SHORT).show();
+                                }
+                            });
 
 
 
@@ -199,7 +218,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.v("Error", "onErrorResponse: " + error);
-                Toast.makeText(getActivity(), "Distance Can't be fetched!" + error, Toast.LENGTH_LONG).show();
+//                Toast.makeText(getActivity(), "Distance Can't be fetched!" + error, Toast.LENGTH_LONG).show();
             }
         }) {
             protected Map<String, String> getParams() {
@@ -224,7 +243,7 @@ public class HomeFragment extends Fragment {
                             hieghtReading = jsonObject.getString("height");
                             volumeReading = jsonObject.getDouble("volume");
                             Log.d(response, "onResponse: " + volumeReading);
-//                                    Toast.makeText(getActivity(), "Current Volume" + volumeReading, Toast.LENGTH_LONG).show();
+//                                    Toast.makeText(getContext(), "Current Volume" + volumeReading, Toast.LENGTH_LONG).show();
 
                         } catch (JSONException e) {
                             Toast.makeText(getActivity(), "Some error occured!", Toast.LENGTH_LONG).show();
@@ -235,23 +254,24 @@ public class HomeFragment extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.v("Error", "onErrorResponse: " + error);
-                Toast.makeText(getActivity(), "RASP didn't work!" + error, Toast.LENGTH_LONG).show();
+//                Toast.makeText(getActivity(), "RASP didn't work!" + error, Toast.LENGTH_LONG).show();
             }
         });
         queue.add(stringRequest);
         return volumeReading;
     }
 
+
+
+
     public static class PetrolPumpReview extends  DialogFragment{
-        TextView nameView, GRating, appRating;
-        EditText userRating;
-        String name, totalUserRatings;
-        double ratings;
+        TextView nameView;
+        LinearLayout foodRatingBarLayout;
+        String name = "DUMMY";
+        RatingBar foodRatingBar, sanitationRatingBar, paymentRatingBar;
         PetrolPumpReview(JSONObject json) {
             try {
                 name = json.getString("name");
-                totalUserRatings = json.getString("app_ratings");
-                ratings = json.getDouble("rating");
             }catch (JSONException e){
                 Toast.makeText(getContext(), "ERROR PARSING FOR REVIEW", Toast.LENGTH_LONG).show();
             }
@@ -265,46 +285,139 @@ public class HomeFragment extends Fragment {
             View view = inflater.inflate(R.layout.review_layout, null);
             builder.setView(view);
 
+
+            foodRatingBarLayout = view.findViewById(R.id.foodRatingBar);
+            foodRatingBar = view.findViewById(R.id.RatingFood);
+            sanitationRatingBar = view.findViewById(R.id.RatingSanitation);
+            paymentRatingBar = view.findViewById(R.id.RatingPayment);
+
             nameView = view.findViewById(R.id.name);
-            GRating = view.findViewById(R.id.rating);
-            appRating = view.findViewById(R.id.app_rating);
+//            GRating = view.findViewById(R.id.rating);
+//            appRating = view.findViewById(R.id.app_rating);
             nameView.setText(name);
-            GRating.setText(ratings+"");
-            appRating.setText(totalUserRatings);
+//            GRating.setText(ratings+"");
+//            appRating.setText(totalUserRatings);
 
-            userRating = view.findViewById(R.id.your_rating);
+//            userRating = view.findViewById(R.id.your_rating);
 
-            builder.setTitle("Reviews")
+            final ArrayList<Boolean> bathroom = new ArrayList<>();
+            final ArrayList<Boolean> food = new ArrayList<>();
+            final ArrayList<Boolean> air = new ArrayList<>();
+            final ArrayList<Boolean> cashless = new ArrayList<>();
+            bathroom.add(false);
+            food.add(false);
+            air.add(false);
+            cashless.add(false);
+
+
+            CheckBox check1 = view.findViewById(R.id.bathroom);
+            CheckBox check2 = view.findViewById(R.id.food);
+            CheckBox check3 = view.findViewById(R.id.cashless);
+            CheckBox check4 = view.findViewById(R.id.air);
+            View.OnClickListener OnCheckBoxClicked = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    boolean checked = ((CheckBox) v).isChecked();
+
+                    // Check which checkbox was clicked
+                    switch (v.getId()) {
+                        case R.id.bathroom:
+                            if (checked) {
+                                bathroom.add(true);
+                                Toast.makeText(getActivity(), "BATHROOM", Toast.LENGTH_SHORT).show();
+                            }
+                            else
+                                bathroom.add(false);
+                            break;
+                        case R.id.food:
+                            if (checked) {
+                                food.add(true);
+                                foodRatingBarLayout.setVisibility(View.VISIBLE);
+                                Toast.makeText(getActivity(), "FOOD", Toast.LENGTH_SHORT).show();
+                            }
+                            else {
+                                food.add(false);
+                                foodRatingBarLayout.setVisibility(View.GONE);
+                            }
+                            break;
+                        case R.id.cashless:
+                            if (checked) {
+                                cashless.add(true);
+                                Toast.makeText(getActivity(), "CASHLESS", Toast.LENGTH_SHORT).show();
+                            }
+                            else
+                                cashless.add(false);
+                            break;
+                        case R.id.air:
+                            if (checked) {
+                                air.add(true);
+                                Toast.makeText(getActivity(), "AIR", Toast.LENGTH_SHORT).show();
+                            }
+                            else
+                                air.add(false);
+                            break;
+                    }
+
+                }
+            };
+            check1.setOnClickListener(OnCheckBoxClicked);
+            check2.setOnClickListener(OnCheckBoxClicked);
+            check4.setOnClickListener(OnCheckBoxClicked);
+            check3.setOnClickListener(OnCheckBoxClicked);
+
+            builder.setTitle("Please provide your review")
                     .setPositiveButton("Okay", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            final String str = userRating.getText().toString();
-
                             String serverURL = login.BASE_URL + "/petrol_pump_ratings_response";
                             final StringRequest stringRequest = new StringRequest(Request.Method.POST, serverURL,
                                     new Response.Listener<String>() {
                                         @Override
                                         public void onResponse(String response) {
                                                 Log.i("response", response);
+                                                Toast.makeText(getContext(), "REVIEWS SUBMITTED!", Toast.LENGTH_SHORT).show();
                                         }
                                     }, new Response.ErrorListener() {
                                 @Override
                                 public void onErrorResponse(VolleyError error) {
                                     Log.v("Error", "onErrorResponse: " + error);
-                                    Toast.makeText(getActivity(), "Couldn't POST" + error, Toast.LENGTH_LONG).show();
+//                                    Toast.makeText(getActivity(), "Couldn't POST" + error, Toast.LENGTH_LONG).show();
                                 }
                             }) {
                                 protected Map<String, String> getParams() {
+
+                                    Boolean bathroomResponse = bathroom.get(bathroom.size()-1);
+                                    Boolean foodResponse = food.get(food.size()-1);
+                                    Boolean airResponse = air.get(air.size()-1);
+                                    Boolean cashlessResponse = cashless.get(cashless.size()-1);
+                                    String foodRating, sanitationRating, paymentRating;
+                                    foodRating = String.valueOf(foodRatingBar.getRating());
+                                    sanitationRating = String.valueOf(sanitationRatingBar.getRating());
+                                    paymentRating = String.valueOf(paymentRatingBar.getRating());
+
                                     Map<String, String> params = new HashMap<String, String>();
+
                                     params.put("name", String.valueOf(name));
-                                    params.put("rating", str);
-                                    //Add the data you'd like to send to the server.
+                                    params.put("bathroom", String.valueOf(bathroomResponse));
+                                    params.put("food", String.valueOf(foodResponse));
+                                    params.put("air", String.valueOf(airResponse));
+                                    params.put("cashless", String.valueOf(cashlessResponse));
+                                    params.put("sanitation", sanitationRating);
+                                    params.put("payment", paymentRating);
+                                    params.put("foodrating", foodRating);
+
                                     return params;
                                 }
                             };
                             queue.add(stringRequest);
                         }
-                    });
+                    })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
             return builder.create();
         }
 
@@ -341,7 +454,8 @@ public class HomeFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.activity_graph, container, false);
+        View rootView = inflater.inflate(R.layout.activity_graph, container, false);
+        return rootView;
     }
 
 
@@ -365,12 +479,22 @@ public class HomeFragment extends Fragment {
             }
         });
 
+
+
         sharedPref = getActivity().getSharedPreferences(
                 "mainSP", Context.MODE_PRIVATE);
         authKey = sharedPref.getString("authkey", "");
 
+        bathroom = false;
+        food = false;
+        cashless = false;
+        air = false;
+
+
 //        current_stats
 
+//        PetrolPumpReview review = new PetrolPumpReview();
+//        review.show(getFragmentManager(), "review");
         final Handler handler = new Handler();
 
         final Runnable r = new Runnable() {
@@ -472,7 +596,7 @@ public class HomeFragment extends Fragment {
                     FuelCheckDialog fuelcheck = new FuelCheckDialog(diffTrun);
                     fuelcheck.show(getFragmentManager(), "Fuel Check");
                     APIPOSTRequest();
-                    v.setTag(1); //pause
+                    v.setTag(1);
                 }
             }
         });
