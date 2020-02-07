@@ -210,7 +210,7 @@ public class HomeFragment extends Fragment {
 //                                    Toast.makeText(getActivity(), "Current Volume" + volumeReading, Toast.LENGTH_LONG).show();
 
                         } catch (JSONException e) {
-                            Toast.makeText(getActivity(), "Some error occured!", Toast.LENGTH_LONG).show();
+//                            Toast.makeText(getActivity(), "Some error occured!", Toast.LENGTH_LONG).show();
                             e.printStackTrace();
                         }
                     }

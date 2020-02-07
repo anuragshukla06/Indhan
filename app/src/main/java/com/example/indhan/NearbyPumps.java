@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import java.util.Random;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,6 +27,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,7 +41,7 @@ import static com.example.indhan.login.longitude;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * A simple {@link Fragment} subclass./
  * Activities that contain this fragment must implement the
  * {@link NearbyPumps.OnFragmentInteractionListener} interface
  * to handle interaction events.
@@ -60,6 +62,7 @@ public class NearbyPumps extends Fragment {
     private String mParam2;
     RecyclerView pumpRecyclerView;
     RecyclerView.LayoutManager layoutManager;
+    FloatingActionButton filterFloatButton;
 
     StringRequest getNearbyPumpsRequest() {
         String serverURL = login.BASE_URL + "/petrol_pump_ratings_recommendation";
@@ -82,7 +85,15 @@ public class NearbyPumps extends Fragment {
                                 double latitude = locationObject.getDouble("lat");
                                 double longitude = locationObject.getDouble("lng");
 
-                                myDataset.add(new PumpContentClass(pumpName, googleRating, indhanRating, latitude, longitude));
+                                Random rand = new Random();
+
+                                myDataset.add(new PumpContentClass(pumpName,
+                                        googleRating, indhanRating, latitude, longitude,
+                                        String.valueOf(rand.nextInt(5)),
+                                        String.valueOf(rand.nextInt(5)),
+                                        rand.nextBoolean(),
+                                        rand.nextBoolean(),
+                                        rand.nextBoolean()));
                             }
 
                         } catch (JSONException e) {
@@ -115,12 +126,31 @@ public class NearbyPumps extends Fragment {
 
     }
 
+    void fillRandomPumpData(int n) {
+
+        ArrayList<PumpContentClass> myDataset = new ArrayList<>();
+        Random rand = new Random();
+
+        for(int i=0; i<n; i++) {
+            myDataset.add(new PumpContentClass("ABC" + rand.nextInt(),
+                    rand.nextInt(5) + "", rand.nextInt(5) + "", rand.nextFloat(), rand.nextFloat(),
+                    String.valueOf(rand.nextInt(5)),
+                    String.valueOf(rand.nextInt(5)),
+                    rand.nextBoolean(),
+                    rand.nextBoolean(),
+                    rand.nextBoolean()));
+        }
+        MyAdapter mAdapter = new MyAdapter(myDataset);
+        pumpRecyclerView.setAdapter(mAdapter);
+    }
+
 
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         pumpRecyclerView = getView().findViewById(R.id.pumpRecyclerView);
+        filterFloatButton = getView().findViewById(R.id.filterFloatButton);
 
         layoutManager = new LinearLayoutManager(getContext());
         pumpRecyclerView.setLayoutManager(layoutManager);
@@ -128,7 +158,9 @@ public class NearbyPumps extends Fragment {
 
         StringRequest nearbyPumpsRequest = getNearbyPumpsRequest();
 
-        queue.add(nearbyPumpsRequest);
+        fillRandomPumpData(15);
+
+//        queue.add(nearbyPumpsRequest);
 
 
     }

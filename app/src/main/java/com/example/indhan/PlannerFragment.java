@@ -96,14 +96,14 @@ public class PlannerFragment extends Fragment {
                                 resultTextView.setText("Warning your fuel level does not seem enough for the journey."
                                  + "\n" + "Petrol Needed: " + petrolNeeded + "L"
                                 + "\n" + "Current Level: " + HomeFragment.volumeReading + "L"
-                                        + "\n" + "Fuel Worth: " + cost + "L");
+                                        + "\n" + "Fuel Worth: " + cost + " Rs.");
                             }
 
                             else {
                                 resultTextView.setText("You are good to go. Your Travel Details: " + "\n"
                                         + "\n" + "Petrol Needed: " + petrolNeeded + "L"
                                         + "\n" + "Current Level: " + HomeFragment.volumeReading + "L"
-                                        + "\n" + "Fuel Worth: " + cost + "L");
+                                        + "\n" + "Fuel Worth: " + cost + " Rs.");
                             }
 
                             resultTextView.append("\n Please Click the message to open navigation");

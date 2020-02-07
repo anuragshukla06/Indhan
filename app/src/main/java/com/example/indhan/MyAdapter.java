@@ -57,8 +57,14 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
         PumpContentClass pump = mDataset.get(position);
         TextView pumpName = holder.view.findViewById(R.id.pumpName);
-        TextView indhanRatingTextView = holder.view.findViewById(R.id.indhanRatingTextView);
+        TextView behaviorRatingTextView = holder.view.findViewById(R.id.behaviorRatingTextView); // Change the textView here
         TextView googleRatingTextView = holder.view.findViewById(R.id.googleRatingTextView);
+        TextView sanityRatingTextView = holder.view.findViewById(R.id.sanityRatingTextView);
+        TextView restaurantRatingTextView = holder.view.findViewById(R.id.restaurantRatingTextView);
+        TextView airServiceTextView = holder.view.findViewById(R.id.airServiceTextView);
+        TextView paymentServiceTextView = holder.view.findViewById(R.id.paymentServiceTextView);
+        TextView washroomServiceTextView = holder.view.findViewById(R.id.washroomServiceTextView);
+        TextView restaurantServiceTextView = holder.view.findViewById(R.id.restaurantServiceTextView);
         TextView navigateTextView = holder.view.findViewById(R.id.navigateTextView);
         Uri gmmIntentUri1 =
                 Uri.parse("google.navigation:q=" + pump.latitude + "," + pump.longitude);
@@ -72,8 +78,14 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         });
 
         pumpName.setText(pump.getPumpName());
-        indhanRatingTextView.setText(pump.getIndhanRating());
+        behaviorRatingTextView.setText(pump.getBehaviour());
         googleRatingTextView.setText(pump.getGoogleRating());
+        sanityRatingTextView.setText(pump.getSanity());
+        restaurantRatingTextView.setText(pump.getrestaurantRating());
+        airServiceTextView.setText(String.valueOf(pump.isAir()));
+        paymentServiceTextView.setText(String.valueOf(pump.isCashless()));
+        washroomServiceTextView.setText(String.valueOf(pump.isWashroom()));
+        restaurantServiceTextView.setText(String.valueOf(pump.isRestaurant()));
 
     }
 
