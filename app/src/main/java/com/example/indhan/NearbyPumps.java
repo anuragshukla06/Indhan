@@ -77,66 +77,66 @@ public class NearbyPumps extends Fragment {
     boolean clickedArray[];
     ArrayList<PumpContentClass> myDataset;
 
-    StringRequest getNearbyPumpsRequest() {
-        String serverURL = login.BASE_URL + "/petrol_pump_ratings_recommendation";
-        return new StringRequest(Request.Method.POST, serverURL,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        // Display the first 500 characters of the response string.
-                        ArrayList<PumpContentClass> myDataset = new ArrayList<>();
-//                        Toast.makeText(getContext(), response, Toast.LENGTH_SHORT).show();
-                        try {
-                            JSONObject responseObject = new JSONObject(response);
-
-                            for (int i = 0; i < responseObject.length(); i++) {
-                                JSONObject object = responseObject.getJSONObject(Integer.toString(i));
-                                String pumpName = object.getString("name");
-                                String googleRating = object.getString("rating");
-                                String indhanRating = object.getString("app_ratings");
-                                JSONObject locationObject = object.getJSONObject("location");
-                                double latitude = locationObject.getDouble("lat");
-                                double longitude = locationObject.getDouble("lng");
-
-                                Random rand = new Random();
-
-                                myDataset.add(new PumpContentClass(pumpName,
-                                        googleRating, indhanRating, latitude, longitude,
-                                        String.valueOf(rand.nextInt(5)),
-                                        String.valueOf(rand.nextInt(5)),
-                                        rand.nextBoolean(),
-                                        rand.nextBoolean(),
-                                        rand.nextBoolean()));
-                            }
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            Toast.makeText(getContext(), "Server Error.", Toast.LENGTH_SHORT).show();
-                        }
-
-
-                        MyAdapter mAdapter = new MyAdapter(myDataset);
-                        pumpRecyclerView.setAdapter(mAdapter);
-
-//                            textView.setText("Response is: "+ response.substring(0,500));
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getContext(), "That didn't work!" + error, Toast.LENGTH_LONG).show();
-            }
-        }) {
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("lat", String.valueOf(latitude));
-                params.put("lon", String.valueOf(longitude));
-                //Add the data you'd like to send to the server.
-                return params;
-            }
-        };
-
-
-    }
+//    StringRequest getNearbyPumpsRequest() {
+//        String serverURL = login.BASE_URL + "/petrol_pump_ratings_recommendation";
+//        return new StringRequest(Request.Method.POST, serverURL,
+//                new Response.Listener<String>() {
+//                    @Override
+//                    public void onResponse(String response) {
+//                        // Display the first 500 characters of the response string.
+//                        ArrayList<PumpContentClass> myDataset = new ArrayList<>();
+////                        Toast.makeText(getContext(), response, Toast.LENGTH_SHORT).show();
+//                        try {
+//                            JSONObject responseObject = new JSONObject(response);
+//
+//                            for (int i = 0; i < responseObject.length(); i++) {
+//                                JSONObject object = responseObject.getJSONObject(Integer.toString(i));
+//                                String pumpName = object.getString("name");
+//                                String googleRating = object.getString("rating");
+//                                String indhanRating = object.getString("app_ratings");
+//                                JSONObject locationObject = object.getJSONObject("location");
+//                                double latitude = locationObject.getDouble("lat");
+//                                double longitude = locationObject.getDouble("lng");
+//
+//                                Random rand = new Random();
+//
+//                                myDataset.add(new PumpContentClass(pumpName,
+//                                        googleRating, indhanRating, latitude, longitude,
+//                                        String.valueOf(rand.nextInt(5)),
+//                                        String.valueOf(rand.nextInt(5)),
+//                                        rand.nextBoolean(),
+//                                        rand.nextBoolean(),
+//                                        rand.nextBoolean()));
+//                            }
+//
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                            Toast.makeText(getContext(), "Server Error.", Toast.LENGTH_SHORT).show();
+//                        }
+//
+//
+//                        MyAdapter mAdapter = new MyAdapter(myDataset);
+//                        pumpRecyclerView.setAdapter(mAdapter);
+//
+////                            textView.setText("Response is: "+ response.substring(0,500));
+//                    }
+//                }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                Toast.makeText(getContext(), "That didn't work!" + error, Toast.LENGTH_LONG).show();
+//            }
+//        }) {
+//            protected Map<String, String> getParams() {
+//                Map<String, String> params = new HashMap<String, String>();
+//                params.put("lat", String.valueOf(latitude));
+//                params.put("lon", String.valueOf(longitude));
+//                //Add the data you'd like to send to the server.
+//                return params;
+//            }
+//        };
+//
+//
+//    }
 
     void fillRandomPumpData(int n) {
 
@@ -256,7 +256,7 @@ public class NearbyPumps extends Fragment {
         RequestQueue queue = Volley.newRequestQueue(getContext());
 
 
-        StringRequest nearbyPumpsRequest = getNearbyPumpsRequest();
+//        StringRequest nearbyPumpsRequest = getNearbyPumpsRequest();
 
         fillRandomPumpData(15);
 

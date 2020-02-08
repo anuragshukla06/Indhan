@@ -58,7 +58,7 @@ public class login extends AppCompatActivity {
    SharedPreferences sharedPref;
 
     RequestQueue MyRequestQueue;
-    static String BASE_URL = "http://172.16.143.180:8000";
+    static String BASE_URL = "http://172.16.202.206:8000";
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -128,12 +128,12 @@ public class login extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-
+//                    Toast.makeText(login.this, "Service should start", Toast.LENGTH_SHORT).show();
                     startService(new Intent(getApplicationContext(), MainGraphActivity.FuelDataService.class)); //this function can change value of mInterval.
                 } finally {
                     // 100% guarantee that this always happens, even if
                     // your update method throws an exception
-                    handler.postDelayed(this, 300000);
+                    handler.postDelayed(this, 5000);
                 }
             }
         };

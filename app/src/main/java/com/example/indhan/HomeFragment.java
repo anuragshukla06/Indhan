@@ -2,10 +2,13 @@ package com.example.indhan;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -23,6 +26,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
@@ -56,7 +61,7 @@ import static com.example.indhan.login.longitude;
 
 public class HomeFragment extends Fragment {
     static  double volumeReading, before, after, diff, distance, mileage;
-    String hieghtReading;
+    static String hieghtReading;
     public String rpiURL = "http://192.168.137.232:8080/";
     static RequestQueue queue;
     static JSONArray dist, mile, fuelCom;
@@ -65,9 +70,12 @@ public class HomeFragment extends Fragment {
     RelativeLayout back;
     SharedPreferences sharedPref;
     Button logoutButton;
+    Button sos_button;
     String authKey;
     boolean bathroom, food, cashless, air;
     CheckBox check1, check2, check3, check4;
+    NotificationManagerCompat notificationManager;
+    NotificationCompat.Builder DangerNotiBuilder;
 
     void ServerGraphRequest(){
         String serverUrl = login.BASE_URL + "/index";
@@ -449,6 +457,79 @@ public class HomeFragment extends Fragment {
 
     }
 
+    StringRequest getNearbyPumpsRequest() {
+
+        Toast.makeText(getContext(), "REQUEST ATTEMPT", Toast.LENGTH_SHORT).show();
+
+        String serverURL = login.BASE_URL + "/petrolpump";
+        return new StringRequest(Request.Method.POST, serverURL,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // Display the first 500 characters of the response string.
+//                            Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
+
+                        try {
+
+                            JSONObject responseObject = new JSONObject(response);
+                            JSONObject nearestPump = responseObject.getJSONObject("0");
+                            JSONObject nearestPumpLocation = nearestPump.getJSONObject("location");
+                            double nearestPumpLong = nearestPumpLocation.getDouble("lng");
+                            double nearestPumpLat = nearestPumpLocation.getDouble("lat");
+
+
+
+                            Uri gmmIntentUri1 =
+                                    Uri.parse("google.navigation:q=" + nearestPumpLat + "," + nearestPumpLong);
+                            Intent mapIntent1 = new Intent(Intent.ACTION_VIEW, gmmIntentUri1);
+                            mapIntent1.setPackage("com.google.android.apps.maps");
+
+                            Uri gmmIntentUri2 = Uri.parse("geo:0,0?q=petrol pumps");
+                            Intent mapIntent2 = new Intent(Intent.ACTION_VIEW, gmmIntentUri2);
+                            mapIntent2.setPackage("com.google.android.apps.maps");
+
+                            PendingIntent nearestPendingIntent = PendingIntent.getActivity(getActivity(), 0, mapIntent1, 0);
+                            PendingIntent nearPendingIntent = PendingIntent.getActivity(getActivity(), 0, mapIntent2, 0);
+
+                            DangerNotiBuilder = new NotificationCompat.Builder(getActivity())
+                                    .setSmallIcon(R.drawable.ic_launcher_foreground)
+                                    .setContentTitle("You are running low on fuel")
+                                    .setContentText("Click here to head to the nearest station")
+                                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                                    .addAction(R.drawable.ic_launcher_foreground, "Head to nearest pump", nearestPendingIntent)
+                                    .addAction(R.drawable.ic_launcher_foreground, "See all pumps", nearPendingIntent);
+
+
+                            notificationManager.notify(2, DangerNotiBuilder.build());
+
+
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+//                            textView.setText("Response is: "+ response.substring(0,500));
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getActivity(), "That didn't work!" + error, Toast.LENGTH_LONG).show();
+            }
+        })
+        {
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                String authKey = sharedPref.getString("authkey", "");
+                params.put("lat", String.valueOf(latitude));
+                params.put("lon", String.valueOf(longitude));
+                //Add the data you'd like to send to the server.
+                return params;
+            }
+        };
+
+
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -470,12 +551,20 @@ public class HomeFragment extends Fragment {
         fuelView = getView().findViewById(R.id.fuelText);
         logoutButton = getView().findViewById(R.id.logout_button);
         userView = getView().findViewById(R.id.currentUser);
+        sos_button = getView().findViewById(R.id.sos_button);
 
         bathroom = false;
         food = false;
         cashless = false;
         air = false;
 
+        sos_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), SOS_activity.class);
+                startActivity(intent);
+            }
+        });
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -526,6 +615,7 @@ public class HomeFragment extends Fragment {
 
 
 
+
 //        current_stats
 
 //        PetrolPumpReview review = new PetrolPumpReview();
@@ -542,8 +632,12 @@ public class HomeFragment extends Fragment {
                 fuelView.setText("FUEL: "+Trun+" L");
 
                 int color;
-                if(Trun<1)
+                if(Trun<1) {
                     color = Color.parseColor("#ef9a9a");
+                    StringRequest req = getNearbyPumpsRequest();
+
+                    queue.add(req);
+                }
                 else
                     color = Color.parseColor("#9ccc65");
                 back.setBackgroundColor(color);

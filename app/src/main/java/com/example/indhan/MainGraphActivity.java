@@ -1,9 +1,12 @@
 package com.example.indhan;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -21,6 +24,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
 import com.android.volley.Request;
@@ -44,6 +48,7 @@ import static com.example.indhan.login.longitude;
 public class MainGraphActivity extends AppCompatActivity {
 
     final int PERMISSIONS_REQUEST_READ_CONTACTS = 1;
+    int accident = 1;
 
 
     public static class FuelDataService extends Service {
@@ -182,7 +187,7 @@ public class MainGraphActivity extends AppCompatActivity {
 
         @Override
         public int onStartCommand(Intent intent, int flags, int startId) {
-
+            Toast.makeText(this, "Service should start", Toast.LENGTH_SHORT).show();
 //            final Handler handler = new Handler();
             String rpiURL ="http://192.168.137.232:8080/";
 //            Toast.makeText(getApplicationContext(), "yes", Toast.LENGTH_SHORT).show();
@@ -196,7 +201,7 @@ public class MainGraphActivity extends AppCompatActivity {
                                 JSONObject jsonObject = new JSONObject(response);
 
                                 hieghtReading = jsonObject.getString("height");
-                                volumeReading = jsonObject.getDouble("volume");
+                                volumeReading = 0;
 //                                Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
 
                                 StringRequest sendReadingRequest = getSendReadingRequest();
@@ -243,11 +248,31 @@ public class MainGraphActivity extends AppCompatActivity {
 
 // Add the request to the RequestQueue.
 
+            Toast.makeText(FuelDataService.this, "Response attempt", Toast.LENGTH_SHORT).show();
+
             queue.add(stringRequest);
 
 
 
             return super.onStartCommand(intent, flags, startId);
+        }
+    }
+
+
+
+    public class FireMissilesDialogFragment extends DialogFragment {
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the Builder class for convenient dialog construction
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage("Accident Detected. Sending SOS. Cancel?")
+                    .setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // FIRE ZE MISSILES!
+                        }
+                    });
+            // Create the AlertDialog object and return it
+            return builder.create();
         }
     }
 
@@ -275,6 +300,12 @@ public class MainGraphActivity extends AppCompatActivity {
                 checkSelfPermission(Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED){
             requestPermissions(new String[]{Manifest.permission.READ_CONTACTS, Manifest.permission.CALL_PHONE}, PERMISSIONS_REQUEST_READ_CONTACTS);
         }
+
+        if (accident == 1){
+
+        }
+
+
 
 
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
