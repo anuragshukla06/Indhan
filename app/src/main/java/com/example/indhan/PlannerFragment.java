@@ -144,9 +144,9 @@ public class PlannerFragment extends Fragment {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("token", String.valueOf(login.authKey));
                 params.put("lat1", String.valueOf(fromLatLng.latitude));
-                params.put("lon1", String.valueOf(fromLatLng.latitude));
+                params.put("lon1", String.valueOf(fromLatLng.longitude));
                 params.put("lat2", String.valueOf(destinationLatLng.latitude));
-                params.put("lon2", String.valueOf(destinationLatLng.latitude));
+                params.put("lon2", String.valueOf(destinationLatLng.longitude));
                 //Add the data you'd like to send to the server.
                 return params;
             }
