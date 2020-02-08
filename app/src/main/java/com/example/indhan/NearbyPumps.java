@@ -263,7 +263,8 @@ public class NearbyPumps extends Fragment {
         filterFloatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                filterLinearLayout.setVisibility(View.VISIBLE);
+                if (filterLinearLayout.getVisibility() == View.VISIBLE) filterLinearLayout.setVisibility(View.GONE);
+                else filterLinearLayout.setVisibility(View.VISIBLE);
             }
         });
 

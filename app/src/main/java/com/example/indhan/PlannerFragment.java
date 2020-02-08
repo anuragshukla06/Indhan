@@ -6,6 +6,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -75,7 +76,7 @@ public class PlannerFragment extends Fragment {
     }
 
     StringRequest getDistanceRequest(final LatLng fromLatLng, final LatLng destinationLatLng) {
-        String serverURL = login.BASE_URL + "/travel_time";
+        String serverURL = login.BASE_URL + "/plan_trip";
         return new StringRequest(Request.Method.POST, serverURL,
                 new Response.Listener<String>() {
                     @Override
@@ -83,16 +84,21 @@ public class PlannerFragment extends Fragment {
                         // Display the first 500 characters of the response string.
                         // Request Code
 //                            textView.setText("Response is: "+ response.substring(0,500));
+                        Log.i("trip_response", response);
                         try {
                             JSONObject object = new JSONObject(response);
-                            double hours = object.getDouble("time");
+                            double average_speed = object.getDouble("average_speed");
 //                            hours = 3;
-                            double AvgSpeed = 40;
-                            double effectiveDistance = hours*AvgSpeed;
-                            double petrolNeeded = effectiveDistance/HomeFragment.mileage;
-                            double cost = petrolNeeded*Price;
+                            double petrolNeeded = object.getDouble("petrol");
+                            double time = object.getDouble("time");
+                            double distance = object.getDouble("distance");
+
+                            double petrol_price = 73.73;
+
+
 
                             if (petrolNeeded > HomeFragment.volumeReading) {
+                                double cost = petrolNeeded*(petrol_price-HomeFragment.volumeReading);
                                 resultTextView.setText("Warning your fuel level does not seem enough for the journey."
                                  + "\n" + "Petrol Needed: " + petrolNeeded + "L"
                                 + "\n" + "Current Level: " + HomeFragment.volumeReading + "L"
@@ -102,8 +108,7 @@ public class PlannerFragment extends Fragment {
                             else {
                                 resultTextView.setText("You are good to go. Your Travel Details: " + "\n"
                                         + "\n" + "Petrol Needed: " + petrolNeeded + "L"
-                                        + "\n" + "Current Level: " + HomeFragment.volumeReading + "L"
-                                        + "\n" + "Fuel Worth: " + cost + " Rs.");
+                                        + "\n" + "Current Level: " + HomeFragment.volumeReading + "L");
                             }
 
                             resultTextView.append("\n Please Click the message to open navigation");
@@ -137,6 +142,7 @@ public class PlannerFragment extends Fragment {
         {
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
+                params.put("token", String.valueOf(login.authKey));
                 params.put("lat1", String.valueOf(fromLatLng.latitude));
                 params.put("lon1", String.valueOf(fromLatLng.latitude));
                 params.put("lat2", String.valueOf(destinationLatLng.latitude));

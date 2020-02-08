@@ -52,12 +52,13 @@ public class login extends AppCompatActivity {
     TextView signUpButton;
     boolean signedIn = false;
     EditText emailSinEditText, pswdSinEditText;
+    static String authKey;
 
     static double latitude = 21.2497, longitude = 81.6050;
    SharedPreferences sharedPref;
 
     RequestQueue MyRequestQueue;
-    static String BASE_URL = "http://172.16.122.31:8000";
+    static String BASE_URL = "http://172.16.123.232:8000";
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -170,7 +171,7 @@ public class login extends AppCompatActivity {
         sharedPref = getApplication().getSharedPreferences(
                 "mainSP", Context.MODE_PRIVATE);
 
-        final String authKey = sharedPref.getString("authkey", "");
+        authKey = sharedPref.getString("authkey", "");
 
         if (authKey.isEmpty()) {
             signedIn = false;

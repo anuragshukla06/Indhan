@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -66,7 +67,7 @@ public class HomeFragment extends Fragment {
     SharedPreferences sharedPref;
     TextView distView;
     TextView mileageView;
-    Button logoutButton;
+    Button logoutButton, sos_button;
     String authKey;
     boolean bathroom, food, cashless, air;
     CheckBox check1, check2, check3, check4;
@@ -471,6 +472,7 @@ public class HomeFragment extends Fragment {
         mileageView = getView().findViewById(R.id.mileageText);
         fuelView = getView().findViewById(R.id.fuelText);
         logoutButton = getView().findViewById(R.id.logout_button);
+        sos_button = getView().findViewById(R.id.sos_button);
 
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -479,6 +481,13 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        sos_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), SOS_activity.class);
+                startActivity(intent);
+            }
+        });
 
 
         sharedPref = getActivity().getSharedPreferences(
