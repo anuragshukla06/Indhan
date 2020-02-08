@@ -66,7 +66,7 @@ public class HomeFragment extends Fragment {
     static RequestQueue queue;
     static JSONArray dist, mile, fuelCom;
     GraphView mileageGraph, distanceGraph, fuelGraph;
-    TextView fuelView, distView, mileageView, userView;
+    TextView fuelView, distView, mileageView, userView, groupMileageView;
     RelativeLayout back;
     SharedPreferences sharedPref;
     Button logoutButton;
@@ -559,6 +559,8 @@ public class HomeFragment extends Fragment {
         userView = getView().findViewById(R.id.currentUser);
         sos_button = getView().findViewById(R.id.sos_button);
         notificationManager = NotificationManagerCompat.from(getContext());
+        groupMileageView = getView().findViewById(R.id.groupMileage);
+        groupMileageView.setText("Average Mileage Observed: "+login.groupmileage);
 
         bathroom = false;
         food = false;
