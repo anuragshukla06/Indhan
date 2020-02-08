@@ -54,7 +54,7 @@ public class login extends AppCompatActivity {
     EditText emailSinEditText, pswdSinEditText;
     static String authKey;
 
-    static double latitude = 21.2497, longitude = 81.6050;
+    static double latitude = 21.1285, longitude = 81.7662;
    SharedPreferences sharedPref;
 
     RequestQueue MyRequestQueue;
