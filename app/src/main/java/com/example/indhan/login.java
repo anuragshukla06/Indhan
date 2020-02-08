@@ -45,7 +45,7 @@ import static com.example.indhan.MainGraphActivity.FuelDataService.locationManag
 
 public class login extends AppCompatActivity {
     private TextView fbook, acc, sin, sup;
-    private EditText emailSupEditText, pswdSupEditText, pswdConfirmEditText, vehicleModelEditText;
+    private EditText emailSupEditText, pswdSupEditText, pswdConfirmEditText, vehicleModelEditText, vehiclePurchaseYear;
     LinearLayout sinSection;
     LinearLayout supSection;
     MyRegulerText signInButton;
@@ -58,7 +58,7 @@ public class login extends AppCompatActivity {
    SharedPreferences sharedPref;
 
     RequestQueue MyRequestQueue;
-    static String BASE_URL = "http://172.16.123.232:8000";
+    static String BASE_URL = "http://172.16.143.180:8000";
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -101,6 +101,8 @@ public class login extends AppCompatActivity {
         MyRequestQueue = Volley.newRequestQueue(getApplicationContext());
         emailSinEditText = findViewById(R.id.emailSinEditText);
         pswdSinEditText = findViewById(R.id.pswdSinEditText);
+        vehiclePurchaseYear = findViewById(R.id.vehiclePurchaseYear);
+
 
 
 
@@ -201,6 +203,8 @@ public class login extends AppCompatActivity {
 
                                 String authkey = responseObject.getString("token");
                                 setSignInVariables(authkey);
+                                String groupMileage = responseObject.getString("average_mileage");
+                                Toast.makeText(getApplicationContext(), "MILEAGE RECEIVED "+groupMileage, Toast.LENGTH_LONG).show();
 
                                 Intent intent = new Intent(getApplicationContext(), MainGraphActivity.class); // TODO: CALL the intent to kavyansh activity
                                 startActivity(intent);
@@ -238,6 +242,7 @@ public class login extends AppCompatActivity {
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                final String year = vehiclePurchaseYear.getText().toString();
                 final String email = emailSupEditText.getText().toString();
                 //TODO: DO the valid email check.
                 final String password = pswdSupEditText.getText().toString();
@@ -259,11 +264,14 @@ public class login extends AppCompatActivity {
                                 //This code is executed if the server responds, whether or not the response contains data.
                                 //The String 'response' contains the server's response.
                                 try {
+                                    Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
                                     JSONObject responseObject = new JSONObject(response);
                                     String status = responseObject.getString("success");
 //                                    Toast.makeText(login.this, status, Toast.LENGTH_SHORT).show();
                                     if (status.equals("true")) {
                                         String authkey = responseObject.getString("token");
+                                    String groupMileage = responseObject.getString("average_mileage");
+                                    Toast.makeText(getApplicationContext(), "MILEAGE RECEIVED "+groupMileage, Toast.LENGTH_LONG).show();
 
 //                                        Toast.makeText(login.this, authkey, Toast.LENGTH_SHORT).show();
                                         setSignInVariables(authkey);
@@ -294,6 +302,7 @@ public class login extends AppCompatActivity {
                                 params.put("username", email);
                                 params.put("password", password);
                                 params.put("model", vehicleModel);
+                                params.put("year", year);
                                 //Add the data you'd like to send to the server.
                                 return params;
                             }

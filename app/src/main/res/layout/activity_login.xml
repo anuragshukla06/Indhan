@@ -168,6 +168,21 @@
             android:inputType="text"
             android:padding="12dp"
             android:textColor="#000" />
+        <customfonts.MyEditText
+            android:id="@+id/vehiclePurchaseYear"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="5dp"
+            android:background="#f0f0f4"
+            android:drawableLeft="@drawable/lockers"
+            android:drawablePadding="16dp"
+            android:hint="Purchase Year"
+            android:inputType="text"
+            android:padding="12dp"
+            android:textColor="#000" />
         <!--TODO: Vehicle model should be spinner-->
         <TextView
             android:id="@+id/signUpButton"

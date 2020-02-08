@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -62,12 +61,10 @@ public class HomeFragment extends Fragment {
     static RequestQueue queue;
     static JSONArray dist, mile, fuelCom;
     GraphView mileageGraph, distanceGraph, fuelGraph;
-    TextView fuelView;
+    TextView fuelView, distView, mileageView, userView;
     RelativeLayout back;
     SharedPreferences sharedPref;
-    TextView distView;
-    TextView mileageView;
-    Button logoutButton, sos_button;
+    Button logoutButton;
     String authKey;
     boolean bathroom, food, cashless, air;
     CheckBox check1, check2, check3, check4;
@@ -290,7 +287,7 @@ public class HomeFragment extends Fragment {
             builder.setView(view);
 
             fraudView = view.findViewById(R.id.fraud);
-            fraudView.setText("Did you refill with "+diff+ " Litres?");
+            fraudView.setText("Did you refill with 2.3 Litres?");
             foodRatingBarLayout = view.findViewById(R.id.foodRatingBar);
             foodRatingBar = view.findViewById(R.id.RatingFood);
             sanitationRatingBar = view.findViewById(R.id.RatingSanitation);
@@ -472,7 +469,12 @@ public class HomeFragment extends Fragment {
         mileageView = getView().findViewById(R.id.mileageText);
         fuelView = getView().findViewById(R.id.fuelText);
         logoutButton = getView().findViewById(R.id.logout_button);
-        sos_button = getView().findViewById(R.id.sos_button);
+        userView = getView().findViewById(R.id.currentUser);
+
+        bathroom = false;
+        food = false;
+        cashless = false;
+        air = false;
 
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -481,24 +483,47 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        sos_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getContext(), SOS_activity.class);
-                startActivity(intent);
-            }
-        });
+        String serverUrl = login.BASE_URL + "/current_user";
+        final StringRequest stringRequest = new StringRequest(Request.Method.POST, serverUrl,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // Display the first 500 characters of the response string.
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            String userName = jsonObject.getString("username");
+                            userView.setText("Hello "+userName+"!");
+                            Log.d(response, response);
+//                            Toast.makeText(getContext(), response+"", Toast.LENGTH_SHORT).show();
+//                                    Toast.makeText(getActivity(), "Current Volume" + volumeReading, Toast.LENGTH_LONG).show();
 
+                        } catch (JSONException e) {
+//                            Toast.makeText(getActivity(), "Some error occured!", Toast.LENGTH_LONG).show();
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.v("Error", "onErrorResponse: " + error);
+//                Toast.makeText(getActivity(), "Distance Can't be fetched!" + error, Toast.LENGTH_LONG).show();
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("token", authKey);
+                //Add the data you'd like to send to the server.
+                return params;
+            }
+        };
+        queue.add(stringRequest);
 
         sharedPref = getActivity().getSharedPreferences(
                 "mainSP", Context.MODE_PRIVATE);
         authKey = sharedPref.getString("authkey", "");
 
 
-        bathroom = false;
-        food = false;
-        cashless = false;
-        air = false;
+
 
 
 //        current_stats
@@ -542,7 +567,7 @@ public class HomeFragment extends Fragment {
 //
 
 
-                handler.postDelayed(this, 5000);
+                handler.postDelayed(this, 10000);
             }
         };
 
