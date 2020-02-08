@@ -459,7 +459,7 @@ public class HomeFragment extends Fragment {
 
     StringRequest getNearbyPumpsRequest() {
 
-        Toast.makeText(getContext(), "REQUEST ATTEMPT", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getContext(), "REQUEST ATTEMPT", Toast.LENGTH_SHORT).show();
 
         String serverURL = login.BASE_URL + "/petrolpump";
         return new StringRequest(Request.Method.POST, serverURL,
@@ -552,6 +552,7 @@ public class HomeFragment extends Fragment {
         logoutButton = getView().findViewById(R.id.logout_button);
         userView = getView().findViewById(R.id.currentUser);
         sos_button = getView().findViewById(R.id.sos_button);
+        notificationManager = NotificationManagerCompat.from(getContext());
 
         bathroom = false;
         food = false;
