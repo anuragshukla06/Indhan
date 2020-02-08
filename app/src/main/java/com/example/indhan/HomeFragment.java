@@ -66,7 +66,7 @@ public class HomeFragment extends Fragment {
     static RequestQueue queue;
     static JSONArray dist, mile, fuelCom;
     GraphView mileageGraph, distanceGraph, fuelGraph;
-    TextView fuelView, distView, mileageView, userView;
+    TextView fuelView, distView, mileageView, userView, groupMileageView;
     RelativeLayout back;
     SharedPreferences sharedPref;
     Button logoutButton;
@@ -488,8 +488,8 @@ public class HomeFragment extends Fragment {
                             Intent mapIntent2 = new Intent(Intent.ACTION_VIEW, gmmIntentUri2);
                             mapIntent2.setPackage("com.google.android.apps.maps");
 
-                            PendingIntent nearestPendingIntent = PendingIntent.getActivity(getActivity(), 0, mapIntent1, 0);
-                            PendingIntent nearPendingIntent = PendingIntent.getActivity(getActivity(), 0, mapIntent2, 0);
+                            PendingIntent nearestPendingIntent = PendingIntent.getActivity( getView().getContext(), 0, mapIntent1, 0);
+                            PendingIntent nearPendingIntent = PendingIntent.getActivity(getView().getContext(), 0, mapIntent2, 0);
 
                             DangerNotiBuilder = new NotificationCompat.Builder(getActivity())
                                     .setSmallIcon(R.drawable.ic_launcher_foreground)
@@ -553,6 +553,8 @@ public class HomeFragment extends Fragment {
         userView = getView().findViewById(R.id.currentUser);
         sos_button = getView().findViewById(R.id.sos_button);
         notificationManager = NotificationManagerCompat.from(getContext());
+        groupMileageView = getView().findViewById(R.id.groupMileage);
+        groupMileageView.setText("AVG MILEAGE: "+login.groupmileage);
 
         bathroom = false;
         food = false;

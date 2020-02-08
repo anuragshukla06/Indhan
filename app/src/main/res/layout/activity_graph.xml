@@ -29,6 +29,7 @@
                 android:text=""
                 android:textSize="25dp" />
 
+
             <Button
                 android:id="@+id/sos_button"
                 android:layout_width="0dp"
@@ -44,11 +45,22 @@
                 android:text="Logout" />
         </LinearLayout>
 
+        <TextView
+            android:padding="10dp"
+            android:id="@+id/groupMileage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DUMMY"
+            android:textSize="15dp"
+            android:layout_marginRight="5dp"
+            android:textStyle="bold"
+            android:layout_below="@+id/User"/>
+
         <LinearLayout
             android:id="@+id/Circle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/User"
+            android:layout_below="@+id/groupMileage"
             android:gravity="center"
             android:orientation="horizontal">
 

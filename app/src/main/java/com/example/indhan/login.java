@@ -53,6 +53,7 @@ public class login extends AppCompatActivity {
     boolean signedIn = false;
     EditText emailSinEditText, pswdSinEditText;
     static String authKey;
+    static String groupmileage;
 
     static double latitude = 21.1285, longitude = 81.7662;
    SharedPreferences sharedPref;
@@ -203,8 +204,8 @@ public class login extends AppCompatActivity {
 
                                 String authkey = responseObject.getString("token");
                                 setSignInVariables(authkey);
-                                String groupMileage = responseObject.getString("average_mileage");
-                                Toast.makeText(getApplicationContext(), "MILEAGE RECEIVED "+groupMileage, Toast.LENGTH_LONG).show();
+                                groupmileage = responseObject.getString("average_mileage");
+                                Toast.makeText(getApplicationContext(), "MILEAGE RECEIVED "+groupmileage, Toast.LENGTH_LONG).show();
 
                                 Intent intent = new Intent(getApplicationContext(), MainGraphActivity.class); // TODO: CALL the intent to kavyansh activity
                                 startActivity(intent);
@@ -270,8 +271,8 @@ public class login extends AppCompatActivity {
 //                                    Toast.makeText(login.this, status, Toast.LENGTH_SHORT).show();
                                     if (status.equals("true")) {
                                         String authkey = responseObject.getString("token");
-                                    String groupMileage = responseObject.getString("average_mileage");
-                                    Toast.makeText(getApplicationContext(), "MILEAGE RECEIVED "+groupMileage, Toast.LENGTH_LONG).show();
+                                    groupmileage = responseObject.getString("average_mileage");
+                                    Toast.makeText(getApplicationContext(), "MILEAGE RECEIVED "+groupmileage, Toast.LENGTH_LONG).show();
 
 //                                        Toast.makeText(login.this, authkey, Toast.LENGTH_SHORT).show();
                                         setSignInVariables(authkey);
