@@ -25,7 +25,7 @@ A complete solution for a vehicle's fuel management issues.
 
 ### Installing
 
-Clone this repository and build it in a android emulator/android phone using Android Studio.
+Clone this repository and build it in an android emulator/android phone using Android Studio.
 
 ## Authors
 
