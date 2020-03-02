@@ -9,10 +9,10 @@ A complete solution for a vehicle's fuel management issues.
    * Vehicle Model
    * Year of Purchase
    
-*After Signing in, he will now be able to see previously unknown metrics of his vehicle which include but isn’t limited to:
-  * Relative Health of his vehicle, as compared with other vehicles with same model and year of purchase
-  * Line Graphs of trends in mileage, distance travelled and fuel levels 
-  * Average Mileage of other vehicles with same model and year of purchase
+* After Signing in, he will now be able to see previously unknown metrics of his vehicle which include but isn’t limited to:
+    * Relative Health of his vehicle, as compared with other vehicles with same model and year of purchase
+    * Line Graphs of trends in mileage, distance travelled and fuel levels 
+    * Average Mileage of other vehicles with same model and year of purchase
 * A fuel station reviewing system called “Indhan Rating” has been fashioned eyeing warily the needs of its user, in which each fuel station is rated just by a few taps on the screen, based on the following metrics:
   * If washroom, food, cashless payments and air filling facilities are available or not
   * Sanitation, Ease of payments and food outlets (if available)
