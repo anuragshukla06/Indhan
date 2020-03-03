@@ -29,8 +29,8 @@ Clone this repository and build it in an android emulator/android phone using An
 
 ## Authors
 
-* **Kavyansh Chourasia** - [GitHub](https://github.com/bunny98)
 * **Anurag Shukla** - [GitHub](https://github.com/anuragshukla06)
+* **Kavyansh Chourasia** - [GitHub](https://github.com/bunny98)
 
 ## Acknowledgments
 
